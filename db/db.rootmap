@@ -1,0 +1,4 @@
+Library.TSnDatabase:                        libdb.so
+Library.TSnConnection:                      libdb.so
+Library.TSnDbKey:                           libdb.so
+Library.NSnDatabase:                        libdb.so

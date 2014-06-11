@@ -1,0 +1,13 @@
+#include "TSnVoltageBranchLoader.h"
+
+ClassImp(TSnVoltageBranchLoader);
+
+Int_t TSnVoltageBranchLoader::BuildIndexOn(TTree* mytree) {
+
+  TString hn(Form("%s.fTime.GetSec()",GetMyBranchName().Data()));
+  const Int_t ents =
+    mytree->BuildIndex(hn.Data(),
+		       Form("%s.fTime.GetNanoSec()",
+			    GetMyBranchName().Data()));
+  return ents;
+}

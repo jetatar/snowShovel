@@ -1,0 +1,17 @@
+K 10
+svn:ignore
+V 73
+*.d
+*.o
+G__*.cxx
+G__*.h
+Module.mk
+*.i
+*.rootmap
+.svn
+config.mk
+htmldoc
+
+
+
+END

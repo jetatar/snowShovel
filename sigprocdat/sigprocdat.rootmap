@@ -1,0 +1,14 @@
+Library.TSnCalibObject:                     libsigprocdat.so
+Library.TSnCalibSet:                        libsigprocdat.so
+Library.TSnPerSampCalibSet:                 libsigprocdat.so
+Library.TSnPerCardCalibSet:                 libsigprocdat.so
+Library.TSnFPNCalibVal:                     libsigprocdat.so
+Library.TSnFPNCalibSet:                     libsigprocdat.so
+Library.TSnGainCalibVal:                    libsigprocdat.so
+Library.TSnDualGainCalib:                   libsigprocdat.so
+Library.TSnDualGainCalibSet:                libsigprocdat.so
+Library.TSnCalWvData:                       libsigprocdat.so
+Library.TSnInterp1DWvData:                  libsigprocdat.so
+Library.TSnInterp1DSpline3:                 libsigprocdat.so
+Library.TSnStopPosnSet:                     libsigprocdat.so
+Library.TSnCalFFTData:                      libsigprocdat.so

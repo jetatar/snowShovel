@@ -1,0 +1,53 @@
+K 25
+svn:wc:ra_dav:version-url
+V 55
+/svn/repos/!svn/ver/854/snowShovel/trunk/build/template
+END
+Makefile.toplevel.example
+K 25
+svn:wc:ra_dav:version-url
+V 81
+/svn/repos/!svn/ver/525/snowShovel/trunk/build/template/Makefile.toplevel.example
+END
+Module.mk.in
+K 25
+svn:wc:ra_dav:version-url
+V 68
+/svn/repos/!svn/ver/525/snowShovel/trunk/build/template/Module.mk.in
+END
+moduleLinkDef.h.example
+K 25
+svn:wc:ra_dav:version-url
+V 79
+/svn/repos/!svn/ver/525/snowShovel/trunk/build/template/moduleLinkDef.h.example
+END
+ignore-files
+K 25
+svn:wc:ra_dav:version-url
+V 68
+/svn/repos/!svn/ver/525/snowShovel/trunk/build/template/ignore-files
+END
+configure.toplevel.example
+K 25
+svn:wc:ra_dav:version-url
+V 82
+/svn/repos/!svn/ver/525/snowShovel/trunk/build/template/configure.toplevel.example
+END
+cvsignore.in
+K 25
+svn:wc:ra_dav:version-url
+V 68
+/svn/repos/!svn/ver/525/snowShovel/trunk/build/template/cvsignore.in
+END
+module.mk.example
+K 25
+svn:wc:ra_dav:version-url
+V 73
+/svn/repos/!svn/ver/525/snowShovel/trunk/build/template/module.mk.example
+END
+mod.mk.in
+K 25
+svn:wc:ra_dav:version-url
+V 65
+/svn/repos/!svn/ver/854/snowShovel/trunk/build/template/mod.mk.in
+END

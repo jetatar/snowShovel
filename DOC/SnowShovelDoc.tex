@@ -1,0 +1,655 @@
+% $Id: arkdoc.tex,v 1.3 2007/11/27 14:14:45 cjreed Exp $
+
+\documentclass[letter,11pt,twoside]{article}
+
+%------------------------------------
+% packages
+\usepackage{textcomp}
+%\usepackage[utopia]{mathdesign}
+%\usepackage{helvet}
+%\usepackage{courier}
+\usepackage{palatino}
+\usepackage{fancyhdr}
+\usepackage{fancyvrb}
+\usepackage{enumerate}
+\usepackage{amsmath}
+%\usepackage{url}
+%\usepackage{tabularx}
+%\usepackage[english]{babel}
+%\usepackage{color}
+\usepackage[square,numbers,sort&compress,nonamebreak]{natbib}
+
+%------------------------------------
+% switches
+
+%------------------------------------
+% pdf
+\usepackage[pdftex]{graphicx}
+\usepackage[linkbordercolor={0 .5 0},
+  citebordercolor={.8 0 0},
+  urlbordercolor={0 0 .5},
+  raiselinks=true,
+  pdfborder={0 0 1 [2]}]{hyperref}
+
+\pdfoutput=1        % we are running pdflatex
+\pdfcompresslevel=9 % compression level for text and image;
+\pdfadjustspacing=1 % same spacing as latex
+
+\pdfinfo{
+  /Title            (Snow Shovel Documentation)
+  /Author           (Corey Reed)
+  /Creator          ()
+  /Producer         (pdfTeX \pdftexversion\pdftexrevision)
+  /CreationDate     (\today)
+  /Subject          ()
+  /Keywords         ()
+}
+\pdfcatalog{/PageMode(/UseNone)}
+
+
+%------------------------------------
+% margins
+
+%\addtolength{\oddsidemargin}{0.125in}
+%\addtolength{\evensidemargin}{-0.875in}
+%\addtolength{\textwidth}{1.75in}
+%\addtolength{\textheight}{1.75in}
+
+%------------------------------------
+% macros
+
+\newenvironment{itemizedot}
+  {\begin{itemize}\renewcommand{\labelitemi}{$\bullet$}\renewcommand{\labelitemii}{$\bullet$}\renewcommand{\labelitemiii}{$\bullet$}\renewcommand{\labelitemiv}{$\bullet$}}{\end{itemize}}
+\newenvironment{itemizeminus}
+  {\begin{itemize}\renewcommand{\labelitemi}{$-$}\renewcommand{\labelitemii}{$-$}\renewcommand{\labelitemiii}{$-$}\renewcommand{\labelitemiv}{$-$}}{\end{itemize}}
+\newcommand{\tmem}[1]{{\em #1\/}}
+\newcommand{\tmstrong}[1]{\textbf{#1}}
+\newenvironment{enumeratenumeric}{\begin{enumerate}[1.]}{\end{enumerate}}
+\newcommand {\sect}[1]{Sect.~\ref{#1}}
+\newcommand {\Sect}[1]{Section~\ref{#1}}
+\newcommand {\fig}[1]{Fig.~\ref{#1}}
+\newcommand {\Fig}[1]{Figure~\ref{#1}}
+
+\newcommand {\code}[1]{\texttt{\small{#1}}}
+% in a CodeBox, doing " #textit`yeah' " is the same as " \textit{yeah} "
+\DefineVerbatimEnvironment{CodeBox}{Verbatim}
+   {frame=single, fontsize=\small, samepage=true, commandchars=\#\{\}}
+
+%------------------------------------
+% BEGIN DOCUMENT
+\begin{document}
+\pagestyle{fancy}
+
+%%------------------------------------
+%% headers & footers
+\fancyhf{} % clear all
+\renewcommand{\subsectionmark}[1]{\markright{}}
+\fancyhead[LE,RO]{\slshape \rightmark}
+\fancyhead[LO,RE]{\slshape \leftmark}
+\fancyfoot[C]{\thepage}
+
+%\renewcommand{\headrulewidth}{0pt}
+%\renewcommand{\footrulewidth}{0pt}
+
+%%------------------------------------
+%% documentation
+
+\title{The Snow Shovel Build System} 
+\author{Corey Reed} 
+\maketitle
+
+{\tableofcontents}
+
+\newpage
+
+\section{Introduction}
+
+\subsection{What is Snow Shovel?}
+
+Snow Shovel is an infrastructure for ARIANNA software development that
+provides a dynamic build system for C, C++ and Fortran. It allows
+users to work on their analysis code with minimal concern for code
+compiling and library linking tasks. The build system will track the
+effects of changes to any particular source file and automatically
+re-compile and re-link objects as necessary when the user executes a
+\code{make} command.
+
+It should be noted that the software contained in Snow Shovel is
+\emph{not} documented in this article. Rather, this article serves as
+a reference guide explaining how the build system itself works and may
+be used.
+
+\subsection{Goals of Snow Shovel}
+
+\begin{itemizedot}
+   \item To provide a build system that is powerful, generic and easy to use.
+   \begin{itemizeminus}
+      \item Users do not write their own Makefiles.
+      \item Users do not execute compilation or linking commands (e.g.
+        \code{g++}) explicitly.
+      \item Software dependencies automatically and correctly handled.
+      \item Can be configured to build on different systems (i.e. i386
+            Linux, x86-64 Linux, MacOSX, etc.)
+   \end{itemizeminus}
+   \item To facilitate collaborative software development.
+   \begin{itemizeminus}
+      \item Working groups can have their own packages inside Snow Shovel.
+      \item Generate shared object libraries to reduce copying of code.
+   \end{itemizeminus}
+   \item To help enforce coding standards.
+   \begin{itemizeminus}
+      \item See ROOT coding standards.~\cite{root:codeconv}
+      \item Warning-free software.
+   \end{itemizeminus}
+   \item To be compatible with external software.
+   \begin{itemizeminus}
+      \item Not all packages in Snow Shovel need to be built; those relying
+        on external software not present on a given machine may be skipped.
+      \item Dependence on ROOT~\cite{Brun:1997pa} is transparent,
+        but required.
+   \end{itemizeminus}
+\end{itemizedot}
+
+These goals are met by implementing a dynamic build system, similar to
+that used in the ROOT package.
+
+
+\section{Installation}
+
+\subsection{Building Snow Shovel for the First Time}
+
+\begin{enumeratenumeric}
+   \item Checkout the package named snowShovel
+   \begin{enumeratenumeric}
+      \item Change to a directory in which you want Snow Shovel to be placed. A subdirectory \code{snowShovel} will be created, and the Snow Shovel contents will be downloaded, by the following command.
+      \item \code{svn co https://arianna.ps.uci.edu/svn/repos/snowShovel/trunk snowShovel}
+   \end{enumeratenumeric}
+   \item Setup your shell with the following environment variables. See the guide at~\cite{wiki:tipstricks} for an easy solution to changing the location of Snow Shovel or for switching between multiple copies.
+   \begin{itemizeminus}
+      \item ROOTSYS should point to the directory of the ROOT~\cite{Brun:1997pa} package.
+      \item SNS should point to the full path of the newly created \code{snowShovel} directory.
+      \item LD\_LIBRARY\_PATH on Linux, DYLD\_LIBRARY\_PATH on MacOSX, should include \$SNS/lib
+      \item PYTHONPATH should also include \$SNS/lib
+      \item (optional) For code requiring DB access, the PQXXINC and PQXXLIB variables should be set as appropriate (on Ubuntu with the \code{libpqxx} package installed, PQXXLIB should point to /usr/lib and PQXXINC to /usr/include).
+   \end{itemizeminus}
+   \item Run the ./configure script from the \$SNS directory.
+   \item Compile the package using `make'.
+   \begin{itemizeminus}
+     \item It is safe to compile Snow Shovel in parallel using the \code{-j} option of make. For example, \code{make -j3} is a good way to compile on a dual core processor.
+   \end{itemizeminus}
+\end{enumeratenumeric}
+
+
+\section{Usage Reference}
+
+\subsection{Compiling All Packages of Snow Shovel}
+
+Run the \code{make} command from the \$SNS directory. This is the most
+common usage. It is safe to compile Snow Shovel in parallel using the
+\code{-j} option of make. For example, \code{make -j3} is a good way
+to compile on a dual core processor.
+
+\subsection{Compiling One Specific Package of Snow Shovel}
+
+Use the make target \textit{package}, or \textit{package}-libs, from
+the \$SNS directory. For example, to build a package called ``online'',
+use the command \code{make online}.
+
+\subsection{Cleaning a Build (All Packages or One Package)}
+
+To clean all of SNS, use \code{make clean} from the \$SNS directory.
+
+To clean one specific package, use \code{make \textit{package}-clean}
+from the \$SNS directory. For example, to clean a package called
+``online'', use the command \code{make online-clean}.
+
+\subsection{Adding a Class to a Package}
+\label{ref:addClass}
+
+To add a class to an existing package (directory) in Snow Shovel,
+several steps are involved. After creating the source code files, it
+is necessary to tell Snow Shovel to include the new code when building
+the ROOT dictionary (so it is available from CINT, the ROOT
+interpreter). It may also be necessary to update the dependencies of the
+package; for this, see \Sect{ref:buildpackage}.
+
+Adding a class to a package is best illustrated with an example. To
+add a class related to FPN in the sigproc package:
+
+\begin{enumeratenumeric}
+   \item In the package directory, write the interface to the class in a
+         file with the following naming convention: \textit{ClassName}.h,
+         where \textit{ClassName} begins with `TSn'. In this example, a
+         suitable name would be \code{TSnFPN.h}.
+   \item In the package directory, write the implementation of the class
+         in a file with the following name: \textit{ClassName}.cxx . In this
+         example, a suitable name would be \code{TSnFPN.cxx}.
+   \item Edit the `\textit{package}.mk' file in the package directory
+     to tell Snow Shovel that this class should be added to the ROOT
+     dictionary.  In this example, one would add \code{TSnFPN.h}
+     to the ``sigprocDH'' list in the ``sigproc.mk'' file.
+   \item Edit the `\textit{package}LinkDef.h' file in the package
+     directory to tell rootcint how to add this class to the ROOT
+     class dictionary. In this example, one would add the following
+     line to the ``sigprocLinkDef.h'' file: \code{\#pragma link C++
+       class TSnFPN+;} (See the ROOT User's Guide~\cite{root:guide}
+     for an explanation of this line.)
+   \item Use the `make' command from the \$SNS directory to build the new
+         software.
+   \item Commit the interface, implementation, `\textit{package}.mk'
+     and `\textit{package}LinkDef.h' files to SVN~\cite{svn}. In this
+     example, in the \$SNS/sigproc directory, one would execute the
+     command \code{svn commit -m ``a new FPN class'' sigproc.mk
+       sigprocLinkDef.h TSnFPN.h TSnFPN.cxx}.
+\end{enumeratenumeric}
+
+\subsection{Adding a New Package to Snow Shovel}
+
+\begin{enumeratenumeric}
+   \item Use the `build/add\_package \textit{package}' script to add a new
+         package to Snow Shovel. This script does the following:
+   \begin{itemizeminus}
+      \item Creates a new directory in Snow Shovel.
+      \item Adds the \textit{package}.mk and \textit{package}LinkDef.h files to
+        that directory.
+   \end{itemizeminus}
+   \item In the new package directory, edit the \textit{package}.mk
+     and \textit{package}LinkDef.h files as appropriate (i.e. replace
+     ``TMyClass'' with your actual class(es), etc.). It will likely
+     necessary to state the dependencies of the package; for this, see
+     \Sect{ref:buildpackage}. In general, the package names that the
+     new package depends on will be added to the \textit{package}LIBDEP
+     variable. Existing packages, such as ``online'', may be used as
+     examples.
+   \item Follow the directions of \Sect{ref:addClass} to put classes in
+         this new package.
+   \item It may also be necessary to update the dependencies of the
+     package; for this, see \Sect{ref:buildpackage}. In general, it will
+     be necessary to add the package names that the new package depends on
+     to the \textit{package}LIBDEP variable.
+   \item Add the directory (package) name to the \$SNS/Modules file. Be
+         sure to add the package in the correct place. For example, if
+         the new package will use Root, but not the database,
+         it should be inside the \code{ifneq (\$(ROOTSYS\_CONF),)}
+         block, but outside
+         of the \code{ifneq (\$(PQXX\_CONF),)} block.
+   \item Commit the following files to SVN~\cite{svn}:
+   \begin{itemizeminus}
+      \item \$SNS/Modules
+      \item \$SNS/\textit{package}
+      \item \$SNS/\textit{package}/\textit{package}.mk
+      \item \$SNS/\textit{package}/\textit{package}LinkDef.h
+      \item Any interface and implementation files of classes you want to
+            add to this package.
+   \end{itemizeminus}
+   \item Set the ignore properties on the new directory. From the \$SNS directory:
+     \begin{enumeratenumeric}
+       \item \code{svn propget svn:ignore \textit{package} > tempfile}
+       \item \code{svn propset svn:ignore \textit{package} -F tempfile}
+       \item \code{rm tempfile}
+       \item \code{svn commit -m ``set ignore properties'' \textit{package}}
+     \end{enumeratenumeric}
+\end{enumeratenumeric}
+
+\subsection{Adding a New Executable to Snow Shovel}
+
+Implementation files in the special package \textbf{`prog'} will be
+compiled into executable binaries, rather than into a shared object
+library. The executables will be located in the \$SNS/bin directory.
+This feature is intended to be used to generate steering programs
+only.
+
+\begin{enumeratenumeric}
+   \item Write the steering program in an implementation file,
+     \textit{filename}.cxx . \emph{Note:} This program should be as
+     simple as possible, essentially doing nothing except
+     instantiating and running classes from the various packages of
+     Snow Shovel. All algorithms and significant procedures should be
+     placed in separate classes within an appropriate package of Snow
+     Shovel.
+   \item Use the `\$SNS/add-prog.sh \textit{filename}.cxx' script to generate
+         the steering makefile \$SNS/prog/\textit{filename}.mk .
+   \item Edit \$SNS/prog/\textit{filename}.mk to tell Snow Shovel how
+     to build the program.
+   \begin{itemizeminus}
+      \item In the \textit{filename}OBJS target, list any extra object files
+            (i.e. other than \textit{filename}.o) that should be built directly
+            into the executable.
+      \item In the \textit{filename}LINK target, list any libraries that the
+            executable should be linked against. By
+            default, programs are linked against ROOT and Snow Shovel's
+            libraries.
+   \end{itemizeminus}
+   \item Run the `make' command from the \$SNS directory.
+   \item Commit both the \$SNS/prog/\textit{filename}.cxx and\newline%
+         \$SNS/prog/\textit{filename}.mk files to SVN.
+\end{enumeratenumeric}
+
+\subsection{Compatibility With External Software}
+
+Some extra compiler flags may be necessary in order to use external
+classes or functions. To tell Snow Shovel that extra compiler flags
+are needed when building a package, the \textit{package}CXXFLAGSEXTRA
+and \textit{package}LIBEXTRA targets can be used in the
+\textit{package}.mk file. For example, in the ``pqdb'' package, which
+depends on the external PostgreSQL interface library pqxx:
+
+\begin{CodeBox}
+pqdbLIBEXTRA := \
+        `root-config --glibs` \
+        -L$(PQXXLIB) -lpqxx \
+        -L$(SNS)/lib -ldb -ldbdat \
+
+pqdbCXXFLAGSEXTRA := \
+        -I$(PQXXINC) \
+
+pqdbLIBDEP := \
+        db dbdat \
+\end{CodeBox}
+
+%$ just to fix the text highlighting
+
+A line by line explanation of this block follows.
+
+\begin{enumeratenumeric}
+   \item \code{pqdbLIBEXTRA := $\backslash$}
+         \newline%
+         This tells Snow Shovel to use the following directories and libraries
+         against which to link the shared object library of this package.
+   \item \code{`root-config --glibs` $\backslash$}
+         \newline%
+         This executes the \code{root-config --glibs} command, which returns
+         ``-L\$ROOTSYS'' followed by a list of the common ROOT libraries.
+   \item \code{-L\$(PQXXLIB) -lpqxx $\backslash$}
+         \newline%
+         This tells Snow Shovel to look for the libpqxx.so (on Linux) library
+         in the \$PQXXLIB directory.
+   \item \code{-L\$(SNS)/lib -ldb -ldbdat $\backslash$}
+         \newline%
+         This tells Snow Shovel to link the pqxx package against the db and
+         dbdat packages of Snow Shovel.
+   \item \code{pqdbCXXFLAGSEXTRA := $\backslash$}
+         \newline%
+         This tells Snow Shovel to use the following compiler flags when
+         building C++ files in the pqdb package.
+   \item \code{-I\$(PQXXINC) $\backslash$}
+         \newline%
+         This tells Snow Shovel to look for include files in the directory
+         specified by the environment variable PQXXINC. This 
+   \item \code{pqdbLIBDEP := $\backslash$}
+         \newline%
+         This tells Snow Shovel that the pqxx package depends on the following
+         other packages in Snow Shovel, so that it should be built only after
+         the others. Specifying these dependencies is vital for parallel
+         compilation to function properly.
+   \item \code{db dbdat  $\backslash$}
+         \newline%
+         This tells Snow Shovel that pqxx depends on the db and dbdat packages.
+\end{enumeratenumeric}
+
+
+\section{The Build System}
+
+\subsection{Mechanics}
+
+In general, the build system looks in all packages listed in the
+\$SNS/Modules file and compiles any .cxx, .c or .f files it finds there.
+For each package, it then builds a shared object library, a PROOF
+archive (par) file and generates the rootmap for the package. The
+rootmap can be used to determine which shared object library stores a
+particular class.
+
+For the special package `prog', it will build binary programs for all
+.cxx files in that package.
+
+It also keeps track of all dependencies for every .h file in the various
+packages. This allows proper re-building of only those classes which
+require re-building and dramatically reduces the need for calls to `make
+clean'.
+
+Shared object libraries are located in \$SNS/lib, binary executables
+are located in \$SNS/bin, par files are located in \$SNS/par and a
+link to (or copy of) each interface file is located in \$SNS/include.
+
+\subsection{Configuration}
+
+The `configure' script sets up the use of external packages
+(i.e. their locations) and specifies the system architecture. This
+configure file is intended to be editted directly in order to change
+options; it does not parse options from the command line.
+
+The system architecture setup files are located in the
+\$SNS/build/config directory, and they define the general compilation
+setup, such as the compiler program and universal compiler flags.
+Currently, configurations only exist for i386 and x86-64 Linux and
+MacOSX. More configurations can be written if there is a demand for
+more system architecture support. However, the dependency of software
+inside Snow Shovel on external packages may hinder the usefulness of
+Snow Shovel on other architectures.
+
+The build system stores the values of the relevant environment
+variables (\$SNS, \$ROOTSYS, etc.) when \code{\$SNS/configure} is
+run. The values of these environment variables are then checked
+whenever `make' is run, and if they have changed, the user is
+instructed to re-run the configuration script.
+
+Running the configuration script will also execute a `make clean'. This
+is done to ensure that the linking against external packages is properly
+handled, in case their locations have changed.
+
+The configuration script generates the \$SNS/config.mk file which is
+used to store the values of configuration variables at the time when
+configure was run.
+
+\subsection{The Top-Level Makefile}
+
+The \$SNS/Makefile essentially only includes \$SNS/build/Makefile . Thus,
+references to ``the top-level Makefile'' should be understood to be
+referencing \$SNS/build/Makefile .
+
+The Makefile first checks that the configuration file, \$SNS/config.mk,
+has been generated and then includes it. This defines a host of
+variables that may be available during making, such as \$(PQXXINC) .
+
+It then parses the \$SNS/Modules file (ignoring comments) to get a list
+of the packages which should be built, and generates the bootstrap
+Makefile for each package. This bootstrap file is called
+\$SNS/\textit{package}/Module.mk . It is generated using the template file
+\$SNS/build/template/Module.mk.in . The bootstrap Makefiles will be
+discussed in further in the next section.
+
+Next, the dependency files (from all packages) are included. These
+dependency files are simple make rules of the following form:
+
+\begin{CodeBox}
+        #textit{package}/TMyClass.d #textit{package}/TMyClass.o: #textit{deps}
+\end{CodeBox}
+
+where \textit{deps} is a list of all interface files on which this class
+depends. Dependency generation will be described in further detail in
+\Sect{build:deps}.
+
+Then, the `all' target is defined as:
+
+\begin{CodeBox}
+        all: libs pars extras map
+\end{CodeBox}
+
+Thus the build system will make shared object libraries, par files, will
+follow any extra targets that a particular package may have defined and
+will generate the ROOT library map.
+
+Next, the bootstrap Module.mk files are included. This defines all
+package-specific make targets.
+
+Finally, some generic make targets, related to clean and map are
+defined, as well as the general rules for making object files from a
+.cxx, .c or .f file. ROOT dictionary files (G\_\_*.cxx) have a special
+make rule since they require a slightly different set of compiler
+flags.
+
+\subsection{Building a Package}
+\label{ref:buildpackage}
+
+The building of a package is controlled by the automatically generated
+bootstrap Makefiles, \$SNS/\textit{package}/Module.mk, which are included into
+the top-level Makefile.
+
+The Module.mk file first defines the variables needed to build the
+package. This includes the list of C++ and Fortran implementation files,
+the list of all interface files in the package, the desired shared
+object library output name, etc.
+
+It then includes the \$SNS/\textit{package}/\textit{package}.mk
+file. This allows users to control the building of this package in a
+straight-forward way. The \textit{package}.mk file can define any of
+the following targets:
+
+\begin{itemizedot}
+   \item \textit{package}DH - Defines which header files should be used by
+         rootcint to generate the ROOT class dictionary. Normally this
+         is all header files in the package. Note that any class which
+         wants to use the ``ClassDef'' and ``ClassImp'' macros \emph{must}
+         should be listed here.
+   \item \textit{package}DHEXTRA - Lists any header files that should be used
+         to generate the ROOT class dictionary, but which are not part
+         of this package.
+   \item \textit{package}CF - Compiler flags passed to rootcint when generating
+         the ROOT class dictionary.
+   \item \textit{package}LIBEXTRA - List of extra libraries to be used when
+         linking the shared object library for this package. This is
+         commonly used to link with external packages such as ROOT.
+   \item \textit{package}LIBDEP - List of any extra dependencies that should be
+         included in the make target when building the shared object
+         library for this package.
+   \item \textit{package}PAREXTRA - List of any extra files that
+     should be included in the PROOF archive file of this
+     package. Custom par setup macros do \emph{not} need to be listed
+     here. Simply making a
+     \$SNS/\textit{package}/\textit{package}\_setup.C file will result
+     in its being used as the setup macro of the PROOF archive of the
+     package.
+   \item \textit{package}MODULES - List of other packages that should be
+         included in this one. This can be used to generate shared
+         object libraries that simply combine other packages.
+         This may become necessary when classes in two (or more) packages
+         depend on each other.
+   \item \textit{package}CXXFLAGSEXTRA - List of extra compiler flags to use
+         when building .cxx (C++) files.
+   \item \textit{package}CFLAGSEXTRA - List of extra compiler flags to use when
+         building .c (C) files.
+   \item \textit{package}F77FLAGSEXTRA - List of extra compiler flags to use
+         when building .f (F77) files.
+   \item \textit{package}EXTRAS - Used to list any local, user-created make
+         targets. These extra targets will therefore be added to the
+         default build procedure. See \$SNS/prog/prog.mk for an (albeit
+         sophisticated) example.
+   \item \textit{package}LOCALCLEAN - Used to list any local, user-created make
+         rules that should be added to the default `make clean'
+         procedure.
+   \item \textit{package}NOLIB - If defined, then no shared object library will
+         be generated for this package.
+\end{itemizedot}
+
+Next, the list of all object, dependency and header files for the
+package are generated and the make rules for linking or copying the
+header files to \$SNS/include are defined.
+
+Finally, the make rules for building the shared object library, the par
+file, the ROOT dictionary and the dependency files are defined. In the
+case that extra compiler flags were defined, the generic rules for
+building object files are made specific for this package (and will use
+this package's extra flags).
+
+\subsection{Dependencies}
+\label{build:deps}
+
+Dependency make rules are defined in the bootstrap Makefile of a
+package. As an example, the make rule for generating the dependencies of
+all C++ files in a package is:
+
+\begin{CodeBox}
+#textit{package}/#%.d: #textit{package}/#%.cxx
+        $(MAKEDEP) $@ "$(CXXFLAGS) \
+        $(#textit{package}CXXFLAGSEXTRA)" $< > $@
+\end{CodeBox}
+
+%$ just to fix the text highlighting
+
+The \$(MAKEDEP) variable points to the \$SNS/build/depend.sh script. This
+script uses the \$ROOTSYS/bin/rmkdepend program to determine which
+interface files the class in question depends upon and stores the
+information in a dependency file. These dependency files are simple make
+rules of the following form:
+
+\begin{CodeBox}
+        #textit{package}/TMyClass.d #textit{package}/TMyClass.o: #textit{deps}
+\end{CodeBox}
+
+where \textit{deps} is a list of all interface files on which this class
+depends.
+
+\subsection{Compilation}
+
+The generic make rule for compiling a C++ file is defined at the end of
+the top-level Makefile as follows.
+
+\begin{CodeBox}
+        #%.o: #%.cxx
+                $(CXX) $(OPT) $(CXXFLAGS) -o $@ -c $<
+\end{CodeBox}
+
+%$ just to fix the text highlighting
+
+The variables used here have been defined during configuration.
+
+Thus, first the dependency file will be generated and this dependency
+file will be included into the top-level Makefile. This will define an
+extra make rule for the object (.o) file that lists all of the
+appropriate interfaces as dependencies.  Finally, after all dependencies
+have been resolved, the object will be compiled.
+
+The procedure for C, F77 and ROOT dictionary files are analogous.
+
+\subsection{Library Linking}
+
+The make rule for the library linking is in the bootstrap Makefile of
+each package. It has the following form:
+
+\begin{CodeBox}
+$(#textit{package}LIB): $(#textit{package}LIBDEP) $(#textit{package}O) \
+               $(#textit{package}OMOD) #textit{package}/Module.mk \
+               #textit{package}/#textit{package}.mk 
+        @echo "Making lib#textit{package}.$(SOEXT)" \
+        @$(MAKELIB) $(PLATFORM) $(LD) "$(LDFLAGS)" \
+        "$(SOFLAGS)" lib#textit{package}.$(SOEXT) $@ \
+        "$(#textit{package}O) $(#textit{package}OMOD)" \
+        "$(#textit{package}LIBEXTRA) $(#textit{package}LIBEXTRAMOD)"
+\end{CodeBox}
+
+Thus the library depends on
+\begin{enumeratenumeric}
+   \item Any user defined dependencies (via \textit{package}LIBDEP).
+   \item All .o files in the package.
+   \item All .o files in other packages against which this library
+         will be linked (via \textit{package}MODULES).
+   \item The bootstrap Makefile.
+   \item The \textit{package}.mk steering Makefile.
+\end{enumeratenumeric}
+
+The \$(MAKELIB) variable points to the \$SNS/build/makelib.sh
+script. This script can control library linking on many different
+system architectures and can be used to give ``major.minor.revision''
+version numbers to shared object libraries (although this feature is
+currently not used by Snow Shovel). The \$(LD) variable defines which
+program to use to perform the actual linking. This variable is defined
+in the system architecture configuration file in the
+\$SNS/build/config directory.
+
+
+\bibliographystyle{unsrtnat}
+\bibliography{SnowShovelDoc}
+
+
+%------------------------------------
+\end{document}

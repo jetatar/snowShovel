@@ -1,0 +1,165 @@
+# the (unique!) label for this config
+ConfLabel=Example Config
+#
+# the run number and first number in first seq
+Run=95
+FirstSeq=0
+#
+# number of X per sequence, where X is either saved triggered events (default)
+# or number of saved power readings (if CountPower bit set in RunMode)
+EvtsPerSeq=100
+#
+# run mode: each line enables one bit
+#           possible bits: SingleSeq, CountPower
+# (comment out to get DEFAULTS: infinite sequences and counting events)
+# if CountPower is set, "EvtsPerSeq" applies to power readings instead of trigs
+RunMode=SingleSeq
+#RunMode=CountPower
+#
+# UTC unix time
+DateBuilt=1378863335
+#
+# DACS=channel:dac #0, dac #1, dac #2, dac #3
+# dac number: 0=HI (c4), 1=LO (c2/c1), 2=LO (c1/c2), 3=HI (c3)
+# HL, LL, LH, HH
+DACS= 0 : 2945,4000,4000,3027
+DACS= 1 : 2936,4000,4000,3032
+DACS= 2 : 2955,4000,4000,3041
+DACS= 3 : 2923,4000,4000,3023
+#
+# list of pla's. H=high, L=low, A=any (don't care), B=between
+Plas=HAAAAAAA
+# number of cards in the majority logic
+NumCardsMajLog=1
+# if False, will not disable all thermal triggers (!)
+ThermalTrigOn=True
+#
+# forced trigger period (s). 1800 max. 0 = off
+# NOTE: this is now a floating point number, in seconds
+# (with MBED revision 18 and above)
+# the period can be specified from 0.05s to 1800s
+# of course, triggering faster than the throttle is useless
+ForcedPeriod=0
+#
+# heartbeat period (s). 1800 max. 0 = off. integer values.
+HeartbeatPeriod=0
+#
+# the minimum amount of time (ms) between triggers saved as events
+# triggers occuring before this window has elapsed are discarded
+# integer values. the safety net max is 60000
+ThrottlePeriodms=50
+#
+# how often to check the voltages (s). 1800 max. 0 = off. integer values.
+VoltCheckPeriod=0
+#
+# com win period, dur in seconds. integer values.
+# the comm win period safety net range is [120, 259200]
+# the comm win duration safety net min is 600.
+# the duration is capped at 86400 (24hrs)
+CommWinPeriod=250000
+CommWinDuration=0
+#
+# CommWinSendEvents: if >0, will send this number of events
+# back during the communication window.
+# note: if CommWinSendEvents is declared, CommWinSendData cannot be.
+#CommWinSendEvents=0
+# CommWinSendData: options for sending whole file(s) back during
+# the comm win. One option per line.
+# note: if CommWinSendData is declared, CommWinSendEvents cannot be.
+# options are:
+#   DefaultSendData = send last file, keep comm win open until sending done, don't delete file from station
+#   AllFiles = send all files on SD card
+#   CloseOnTimeout = obey comm win duration
+#   DeleteIfReceived = delete file from SD card if it's received (and station get OK handshake)
+#   ForceSBDtoSendFileData = force data files to be sent over SBD
+# the "DefaultSendData" should always be declared first
+CommWinSendData=DefaultSendData
+#CommWinSendData=AllFiles
+#CommWinSendData=DeleteIfReceived
+CommWinSendData=CloseOnTimeout
+#CommWinSendData=ForceSBDtoSendFileData
+#
+#
+# PARAMETERS NOT LIKELY TO CHANGE BELOW
+#
+#
+# how long to wait for a peripheral (afar, sbd, etc) to make a connection
+# before trying the next peripheral. (safety net minimum = 3 minutes)
+# the integer value is in minutes and must be between 0 and 255
+CommWinConnectTOmins=3
+# how long to wait for a peripheral (afar, sbd, etc) to receive a
+# new configuration once it's connected. (safety net minimum = 3 minutes)
+# the integer value is in minutes and must be between 0 and 255
+CommWinListenTOmins=3
+#
+# how to power what, when. DEFAULT: EVERYTHING OFF!! one line per option
+# options: AmpsDatTak, CardDatTak, IridDatTak, AfarDatTak (during data taking)
+#          AmpsComWin, CardComWin, IridComWin, AfarComWin (during communication)
+#
+# If both Afar and Irid are off during ComWin, the safety net will enable *both*
+#
+# Note: current dCard FPGA program will not accept new threshold values unless
+# power to card is cycled. The work around is to power cards off during comm win.
+PowerOnFor=AmpsDatTak
+PowerOnFor=CardDatTak
+#PowerOnFor=AfarDatTak
+#PowerOnFor=IridDatTak
+PowerOnFor=AmpsComWin
+#PowerOnFor=CardComWin
+PowerOnFor=AfarComWin
+PowerOnFor=IridComWin
+#
+# how many least significant (noise) bits to lose (>0 is lossy)
+WvLoseLSB=0
+# how many most significant (dyn. range) bits to lose (>4 is lossy)
+WvLoseMSB=4
+# a baseline to subtract before compression (useful if WvLoseMSB>4)
+WvBaseline=0
+#
+# com win period in low power mode. integer values.
+CommWinPeriodLowPwr=28200
+# com win duration in low power mode. integer values.
+CommWinDurationLowPwr=600
+#
+# 16 bit ADC reading, below which to switch TO low power mode.
+# safety net max is 25000
+BatVoltToLowPwr=0
+# 16 bit ADC reading, above which to switch back OUT OF low power mode
+# safety net min will be BatVoltToLowPwr
+BatVoltFromLowPwr=0
+#
+# the server that the station should talk to over ethernet
+RemoteServer=128.195.204.151
+RemotePort=6655
+# the stations's internet addresses
+StationIP=128.195.204.148
+StationMask=255.255.255.0
+StationGateway=128.195.204.1
+#
+# one line per destination for which the data should be compressed
+# note that this applies only to the event sent with the status update
+# events from files will be sent as they appear on the SD card!
+# (so these options are actually not really implemented and should
+# probably be left alone)
+# possibilities are: SDcard, Iridium, Afar, USB
+PackDatFor=SDcard
+PackDatFor=Afar
+PackDatFor=Iridium
+PackDatFor=USB
+#
+# whether to write the individual hi/lo thresh PLA's to disk and communications
+# rather than the single pattern. for more info, see TSnPlaSet::GetHiLoPlas
+# this would only be useful for diagnostics to check the PLA hi/lo splitting
+# algorithm on the mbed.
+StreamHiLoPlas=False
+#
+# reset after X seconds of inactivity. integer values.
+# safety nets to the range [300, 3600]
+WatchdogPeriod=1200
+#
+# NOT FUNCTIONAL PARAMETERS BELOW
+#
+# amps currently can't be set individually
+# the intention is "when amps get power, turn these amps on"
+# currently NOT functional
+AmpsOn=0,1,2,3

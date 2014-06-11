@@ -1,0 +1,41 @@
+#
+# $Id$
+#
+
+# modules requiring external packages should be nested
+#
+# if a required pacakge is missing, those modules will not be built
+
+ifneq ($(ROOTSYS_CONF),)
+#modules needing ROOT
+
+MODULES += util
+MODULES += tam
+MODULES += online
+MODULES += db
+MODULES += dbdat
+MODULES += commacts
+MODULES += evdat
+MODULES += loaders
+MODULES += sigproc
+MODULES += sigprocdat
+MODULES += reco
+MODULES += recodat
+MODULES += geo
+MODULES += ana
+
+ifneq ($(PQXX_CONF),)
+#modules needing ROOT + PQXX
+
+MODULES += pqdb
+MODULES += prog
+
+endif
+
+
+ifneq ($(CERNLIB_CONF),)
+#modules needing ROOT+CERNLIB
+
+endif
+
+endif

@@ -1,0 +1,5 @@
+Library.TSnAxisDetails:                     libutil.so
+Library.TSnAxisDetails@@TAxDet:             libutil.so
+Library.TSnPlotBrowser:                     libutil.so
+Library.TSnMath:                            libutil.so
+Library.TSnSpectral:                        libutil.so

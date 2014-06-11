@@ -1,0 +1,245 @@
+K 25
+svn:wc:ra_dav:version-url
+V 47
+/svn/repos/!svn/ver/1053/snowShovel/trunk/dbdat
+END
+TSnCompAmp.cxx
+K 25
+svn:wc:ra_dav:version-url
+V 61
+/svn/repos/!svn/ver/525/snowShovel/trunk/dbdat/TSnCompAmp.cxx
+END
+TSnCompDigitizer.h
+K 25
+svn:wc:ra_dav:version-url
+V 65
+/svn/repos/!svn/ver/525/snowShovel/trunk/dbdat/TSnCompDigitizer.h
+END
+TSnCompDaughtercard.h
+K 25
+svn:wc:ra_dav:version-url
+V 68
+/svn/repos/!svn/ver/854/snowShovel/trunk/dbdat/TSnCompDaughtercard.h
+END
+TSnCompIridium.h
+K 25
+svn:wc:ra_dav:version-url
+V 63
+/svn/repos/!svn/ver/525/snowShovel/trunk/dbdat/TSnCompIridium.h
+END
+TSnSignalStrengthInfo.cxx
+K 25
+svn:wc:ra_dav:version-url
+V 72
+/svn/repos/!svn/ver/854/snowShovel/trunk/dbdat/TSnSignalStrengthInfo.cxx
+END
+TSnCompMotherboard.h
+K 25
+svn:wc:ra_dav:version-url
+V 67
+/svn/repos/!svn/ver/525/snowShovel/trunk/dbdat/TSnCompMotherboard.h
+END
+TSnCompMbed.h
+K 25
+svn:wc:ra_dav:version-url
+V 60
+/svn/repos/!svn/ver/854/snowShovel/trunk/dbdat/TSnCompMbed.h
+END
+TSnAmpOnSet.h
+K 25
+svn:wc:ra_dav:version-url
+V 60
+/svn/repos/!svn/ver/525/snowShovel/trunk/dbdat/TSnAmpOnSet.h
+END
+dbdatLinkDef.h
+K 25
+svn:wc:ra_dav:version-url
+V 61
+/svn/repos/!svn/ver/937/snowShovel/trunk/dbdat/dbdatLinkDef.h
+END
+TSnPlaSet.h
+K 25
+svn:wc:ra_dav:version-url
+V 58
+/svn/repos/!svn/ver/525/snowShovel/trunk/dbdat/TSnPlaSet.h
+END
+TSnCompAfar.h
+K 25
+svn:wc:ra_dav:version-url
+V 60
+/svn/repos/!svn/ver/525/snowShovel/trunk/dbdat/TSnCompAfar.h
+END
+TSnRunInfo.cxx
+K 25
+svn:wc:ra_dav:version-url
+V 61
+/svn/repos/!svn/ver/946/snowShovel/trunk/dbdat/TSnRunInfo.cxx
+END
+TSnCompAmp.h
+K 25
+svn:wc:ra_dav:version-url
+V 59
+/svn/repos/!svn/ver/525/snowShovel/trunk/dbdat/TSnCompAmp.h
+END
+TSnTriggerSetup.cxx
+K 25
+svn:wc:ra_dav:version-url
+V 67
+/svn/repos/!svn/ver/1025/snowShovel/trunk/dbdat/TSnTriggerSetup.cxx
+END
+TSnCommWinSet.cxx
+K 25
+svn:wc:ra_dav:version-url
+V 64
+/svn/repos/!svn/ver/854/snowShovel/trunk/dbdat/TSnCommWinSet.cxx
+END
+TSnNetAdrSet.cxx
+K 25
+svn:wc:ra_dav:version-url
+V 63
+/svn/repos/!svn/ver/525/snowShovel/trunk/dbdat/TSnNetAdrSet.cxx
+END
+TSnDAQConfig.cxx
+K 25
+svn:wc:ra_dav:version-url
+V 63
+/svn/repos/!svn/ver/955/snowShovel/trunk/dbdat/TSnDAQConfig.cxx
+END
+TSnCompFpga.cxx
+K 25
+svn:wc:ra_dav:version-url
+V 62
+/svn/repos/!svn/ver/525/snowShovel/trunk/dbdat/TSnCompFpga.cxx
+END
+TSnSignalStrengthInfo.h
+K 25
+svn:wc:ra_dav:version-url
+V 70
+/svn/repos/!svn/ver/854/snowShovel/trunk/dbdat/TSnSignalStrengthInfo.h
+END
+dbdat.mk
+K 25
+svn:wc:ra_dav:version-url
+V 55
+/svn/repos/!svn/ver/854/snowShovel/trunk/dbdat/dbdat.mk
+END
+TSnComponent.cxx
+K 25
+svn:wc:ra_dav:version-url
+V 63
+/svn/repos/!svn/ver/525/snowShovel/trunk/dbdat/TSnComponent.cxx
+END
+TSnCompAntenna.cxx
+K 25
+svn:wc:ra_dav:version-url
+V 65
+/svn/repos/!svn/ver/525/snowShovel/trunk/dbdat/TSnCompAntenna.cxx
+END
+TSnDacSet.cxx
+K 25
+svn:wc:ra_dav:version-url
+V 60
+/svn/repos/!svn/ver/525/snowShovel/trunk/dbdat/TSnDacSet.cxx
+END
+TSnRunInfo.h
+K 25
+svn:wc:ra_dav:version-url
+V 59
+/svn/repos/!svn/ver/965/snowShovel/trunk/dbdat/TSnRunInfo.h
+END
+TSnTriggerSetup.h
+K 25
+svn:wc:ra_dav:version-url
+V 65
+/svn/repos/!svn/ver/1053/snowShovel/trunk/dbdat/TSnTriggerSetup.h
+END
+TSnCompDigitizer.cxx
+K 25
+svn:wc:ra_dav:version-url
+V 67
+/svn/repos/!svn/ver/525/snowShovel/trunk/dbdat/TSnCompDigitizer.cxx
+END
+TSnCommWinSet.h
+K 25
+svn:wc:ra_dav:version-url
+V 62
+/svn/repos/!svn/ver/946/snowShovel/trunk/dbdat/TSnCommWinSet.h
+END
+TSnCompDaughtercard.cxx
+K 25
+svn:wc:ra_dav:version-url
+V 70
+/svn/repos/!svn/ver/525/snowShovel/trunk/dbdat/TSnCompDaughtercard.cxx
+END
+TSnNetAdrSet.h
+K 25
+svn:wc:ra_dav:version-url
+V 61
+/svn/repos/!svn/ver/525/snowShovel/trunk/dbdat/TSnNetAdrSet.h
+END
+TSnDAQConfig.h
+K 25
+svn:wc:ra_dav:version-url
+V 61
+/svn/repos/!svn/ver/965/snowShovel/trunk/dbdat/TSnDAQConfig.h
+END
+TSnCompIridium.cxx
+K 25
+svn:wc:ra_dav:version-url
+V 65
+/svn/repos/!svn/ver/525/snowShovel/trunk/dbdat/TSnCompIridium.cxx
+END
+TSnCompFpga.h
+K 25
+svn:wc:ra_dav:version-url
+V 60
+/svn/repos/!svn/ver/525/snowShovel/trunk/dbdat/TSnCompFpga.h
+END
+TSnCompMotherboard.cxx
+K 25
+svn:wc:ra_dav:version-url
+V 69
+/svn/repos/!svn/ver/525/snowShovel/trunk/dbdat/TSnCompMotherboard.cxx
+END
+TSnCompMbed.cxx
+K 25
+svn:wc:ra_dav:version-url
+V 62
+/svn/repos/!svn/ver/525/snowShovel/trunk/dbdat/TSnCompMbed.cxx
+END
+TSnAmpOnSet.cxx
+K 25
+svn:wc:ra_dav:version-url
+V 62
+/svn/repos/!svn/ver/525/snowShovel/trunk/dbdat/TSnAmpOnSet.cxx
+END
+TSnComponent.h
+K 25
+svn:wc:ra_dav:version-url
+V 61
+/svn/repos/!svn/ver/525/snowShovel/trunk/dbdat/TSnComponent.h
+END
+TSnPlaSet.cxx
+K 25
+svn:wc:ra_dav:version-url
+V 60
+/svn/repos/!svn/ver/525/snowShovel/trunk/dbdat/TSnPlaSet.cxx
+END
+TSnDacSet.h
+K 25
+svn:wc:ra_dav:version-url
+V 58
+/svn/repos/!svn/ver/525/snowShovel/trunk/dbdat/TSnDacSet.h
+END
+TSnCompAfar.cxx
+K 25
+svn:wc:ra_dav:version-url
+V 62
+/svn/repos/!svn/ver/525/snowShovel/trunk/dbdat/TSnCompAfar.cxx
+END
+TSnCompAntenna.h
+K 25
+svn:wc:ra_dav:version-url
+V 63
+/svn/repos/!svn/ver/525/snowShovel/trunk/dbdat/TSnCompAntenna.h
+END

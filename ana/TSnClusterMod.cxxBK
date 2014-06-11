@@ -1,0 +1,18 @@
+#include "TSnCalWvData.h"
+
+ClassImp( TSnClusterMod );
+
+
+void TSnClusterMod::TSnClusterMod( const Char_t* name, const Char_t* ) :
+{
+}
+
+
+void TSnClusterMod::SlaveBegin( )
+{
+}
+
+
+void TSnClusterMod::Process( )
+{
+}

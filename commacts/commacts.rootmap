@@ -1,0 +1,15 @@
+Library.TSnCommActHiRate:                   libcommacts.so
+Library.TSnCommActConfResend:               libcommacts.so
+Library.TSnCommActSendQueued:               libcommacts.so
+Library.TSnCommActSendNoConf:               libcommacts.so
+Library.TSnCommActSendPeriodic:             libcommacts.so
+Library.TSnCommFiActTransComplete:          libcommacts.so
+Library.TSnCommFiActStopTrans:              libcommacts.so
+Library.TSnCommFiActDeleteRun:              libcommacts.so
+Library.TSnCommFiActDeleteAllData:          libcommacts.so
+Library.TSnCommFiActRequestRun:             libcommacts.so
+Library.TSnCommFiActNoReplyHndshk:          libcommacts.so
+Library.TSnCommFiActSendQueued:             libcommacts.so
+Library.TSnCAGuiActorFrame:                 libcommacts.so
+Library.TSnCAGuiActsList:                   libcommacts.so
+Library.TSnCAGuiActsAvailList:              libcommacts.so

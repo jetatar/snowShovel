@@ -1,0 +1,110 @@
+#
+# $Id: Module.mk 4231 2007-07-19 08:53:53Z loizides $
+#
+# Module.mk for tam module
+# Copyright (c) 2005 MIT
+#
+
+MODDIR  := tam
+MODDIRS := $(MODDIR)/src
+MODDIRI := $(MODDIR)/inc
+
+TAMDIR  := $(MODDIR)
+TAMDIRS := $(TAMDIR)/src
+TAMDIRI := $(TAMDIR)/inc
+
+##### libTAM #####
+TAML    := $(MODDIRI)/LinkDef.h
+TAMDS   := $(MODDIRS)/G__TAM.cxx
+TAMDO   := $(TAMDS:.cxx=.o)
+TAMDH   := $(TAMDS:.cxx=.h)
+
+TAMH1   := $(wildcard $(MODDIRI)/T*.h)
+TAMH    := $(filter-out $(MODDIRI)/LinkDef%,$(wildcard $(MODDIRI)/*.h))
+TAMS    := $(filter-out $(MODDIRS)/G__%,$(wildcard $(MODDIRS)/*.cxx))
+TAMO    := $(TAMS:.cxx=.o)
+
+TAMDEP  := $(TAMO:.o=.d) $(TAMDO:.o=.d)
+TAMLIB  := $(LPATH)/libTAM.$(SOEXT)
+TAMMAP  := $(TAMLIB:.$(SOEXT)=.rootmap)
+
+TAMLIBDEPM := $(TREELIB) $(HISTLIB)
+ifeq ($(EXPLICITLINK),yes)
+TAMLIBDEP = $(TAMLIBDEPM)
+ifeq ($(PLATFORM),win32)
+TAMLIBLIBEXTRA = lib/libTree.lib lib/libHist.lib
+else
+TAMLIBEXTRA    = -Llib -lTree -lHist
+endif
+endif
+
+# used in the main Makefile
+ALLHDRS     += $(patsubst $(MODDIRI)/%.h,include/%.h,$(TAMH))
+ALLLIBS     += $(TAMLIB)
+
+# include all dependency files
+INCLUDEFILES += $(TAMDEP)
+
+# stay compatible with old rootcint
+ifeq ($(ROOTCINTTMPEXE),)
+	ROOTCINTTMPEXE = ROOTCINTTMP
+endif
+
+##### local rules #####
+include/%.h:    $(TAMDIRI)/%.h
+		cp $< $@
+
+$(TAMLIB):   $(TAMO) $(TAMDO) $(MAINLIBS) $(TAMLIBDEP)
+		@$(MAKELIB) $(PLATFORM) $(LD) "$(LDFLAGS)" \
+		   "$(SOFLAGS)" libTAM.$(SOEXT) $@ \
+		   "$(TAMO) $(TAMDO)" \
+		   "$(TAMLIBEXTRA) $(FTAMLIBDIR) $(FTAMLIB)"
+
+$(TAMDS):    $(TAMH1) $(TAML) $(ROOTCINTTMPEXE)
+		@echo "Generating dictionary $@..."
+		$(ROOTCINTTMP) -f $@ -c $(TAMH1) $(TAML)
+
+ifeq ($(ALLMAPS),)
+all-tam:     $(TAMLIB)
+
+map-tam:     $(RLIBMAP)
+		$(RLIBMAP) -r $(ROOTMAP) -l $(TAMLIB) \
+		   -d $(TAMLIBDEP) -c $(TAML)
+
+map::           map-tam
+else
+ALLMAPS     += $(TAMMAP)
+$(TAMMAP):   $(RLIMAP) $(MAKEFILEDEP) $(TAML)
+		$(RLIBMAP) -o $(TAMMAP) -l $(TAMLIB) \
+		   -d $(TAMLIBDEPM) -c $(TAML)
+endif
+
+all-tam:       $(TAMLIB) $(TAMMAP)
+
+clean-tam:
+		@rm -f $(TAMO) $(TAMDO)
+
+clean::         clean-tam
+
+distclean-tam: clean-tam
+		@rm -f $(TAMDEP) $(TAMDS) $(TAMDH) $(TAMLIB) $(TAMMAP)
+
+distclean::     distclean-tam
+
+
+# find TAM version
+TAMVERSION := $(shell $(MODDIR)/utils/getver.sh)
+
+##### extra rules ######
+$(TAMO): CXXFLAGS += -DTAM_RELEASE=\"$(TAMVERSION)\"
+
+tam-tgz:	distclean-tam
+	@echo "Creating version file for \"$(TAMVERSION)\""
+	@echo $(TAMVERSION) > tam/version
+	@echo "Creating documentation"
+	@cd tam/doc && make && make clean > /dev/null
+	@echo "Creating archiv file: \"$(TAMVERSION).tar.gz\""
+	tar -czf $(TAMVERSION).tar.gz MyModules.mk \
+                 tam/Module.mk tam/version tam/doc/tamdoc.pdf \
+	         tam/src/*.* tam/inc/*.* tam/utils/* tam/example/*.*
+	@rm -f tam/version

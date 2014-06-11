@@ -1,0 +1,71 @@
+K 25
+svn:wc:ra_dav:version-url
+V 45
+/svn/repos/!svn/ver/1100/snowShovel/trunk/geo
+END
+TSnGeoDAQBox.cxx
+K 25
+svn:wc:ra_dav:version-url
+V 62
+/svn/repos/!svn/ver/1029/snowShovel/trunk/geo/TSnGeoDAQBox.cxx
+END
+TSnGeoStnSite.h
+K 25
+svn:wc:ra_dav:version-url
+V 61
+/svn/repos/!svn/ver/1033/snowShovel/trunk/geo/TSnGeoStnSite.h
+END
+geo.mk
+K 25
+svn:wc:ra_dav:version-url
+V 52
+/svn/repos/!svn/ver/1030/snowShovel/trunk/geo/geo.mk
+END
+NSnGeoMaterials.h
+K 25
+svn:wc:ra_dav:version-url
+V 63
+/svn/repos/!svn/ver/1029/snowShovel/trunk/geo/NSnGeoMaterials.h
+END
+TSnGeoLPDA.cxx
+K 25
+svn:wc:ra_dav:version-url
+V 60
+/svn/repos/!svn/ver/1029/snowShovel/trunk/geo/TSnGeoLPDA.cxx
+END
+TSnGeoDAQBox.h
+K 25
+svn:wc:ra_dav:version-url
+V 60
+/svn/repos/!svn/ver/1029/snowShovel/trunk/geo/TSnGeoDAQBox.h
+END
+TSnGeoLPDA.h
+K 25
+svn:wc:ra_dav:version-url
+V 58
+/svn/repos/!svn/ver/1029/snowShovel/trunk/geo/TSnGeoLPDA.h
+END
+TSnGeometry.h
+K 25
+svn:wc:ra_dav:version-url
+V 59
+/svn/repos/!svn/ver/1029/snowShovel/trunk/geo/TSnGeometry.h
+END
+TSnGeoStnSite.cxx
+K 25
+svn:wc:ra_dav:version-url
+V 63
+/svn/repos/!svn/ver/1033/snowShovel/trunk/geo/TSnGeoStnSite.cxx
+END
+NSnGeoMaterials.cxx
+K 25
+svn:wc:ra_dav:version-url
+V 65
+/svn/repos/!svn/ver/1029/snowShovel/trunk/geo/NSnGeoMaterials.cxx
+END
+geoLinkDef.h
+K 25
+svn:wc:ra_dav:version-url
+V 58
+/svn/repos/!svn/ver/1100/snowShovel/trunk/geo/geoLinkDef.h
+END

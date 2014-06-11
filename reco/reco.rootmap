@@ -1,0 +1,12 @@
+Library.TSnMinimizer:                       libreco.so
+Library.TSnFittingModule:                   libreco.so
+Library.TSnChanTimeCorlMod:                 libreco.so
+Library.TSnFitChanOffsetMod:                libreco.so
+Library.TSnChanTimeCorlAltEvtsMod:          libreco.so
+Library.TSnFitChanOffsetAltEvtsMod:         libreco.so
+Library.TSnAngleFromChanCorlMod:            libreco.so
+Library.TSnAngleFromSingleChanOffsets:      libreco.so
+Library.TSnSaveRecoResultsMod:              libreco.so
+Library.TSnSaveRecoResultsMod@@TSnRecoResultWrapper: libreco.so
+Library.TSnSaveCorlDataMod:                 libreco.so
+Library.NSnChanCorl:                        libreco.so

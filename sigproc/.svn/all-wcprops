@@ -1,0 +1,353 @@
+K 25
+svn:wc:ra_dav:version-url
+V 49
+/svn/repos/!svn/ver/1136/snowShovel/trunk/sigproc
+END
+TSnRejectBadVoltTimesMod.cxx
+K 25
+svn:wc:ra_dav:version-url
+V 77
+/svn/repos/!svn/ver/959/snowShovel/trunk/sigproc/TSnRejectBadVoltTimesMod.cxx
+END
+TSnMakeShiftTree.cxx
+K 25
+svn:wc:ra_dav:version-url
+V 70
+/svn/repos/!svn/ver/1084/snowShovel/trunk/sigproc/TSnMakeShiftTree.cxx
+END
+TSnCalcAbsTimeMod.h
+K 25
+svn:wc:ra_dav:version-url
+V 68
+/svn/repos/!svn/ver/854/snowShovel/trunk/sigproc/TSnCalcAbsTimeMod.h
+END
+TSnPlotWaveformsMod.h
+K 25
+svn:wc:ra_dav:version-url
+V 70
+/svn/repos/!svn/ver/854/snowShovel/trunk/sigproc/TSnPlotWaveformsMod.h
+END
+TSnFPNSubMod.cxx
+K 25
+svn:wc:ra_dav:version-url
+V 65
+/svn/repos/!svn/ver/854/snowShovel/trunk/sigproc/TSnFPNSubMod.cxx
+END
+TSnStopFindRms.h
+K 25
+svn:wc:ra_dav:version-url
+V 66
+/svn/repos/!svn/ver/1097/snowShovel/trunk/sigproc/TSnStopFindRms.h
+END
+TSnEvtGuiDataGuru.cxx
+K 25
+svn:wc:ra_dav:version-url
+V 71
+/svn/repos/!svn/ver/1009/snowShovel/trunk/sigproc/TSnEvtGuiDataGuru.cxx
+END
+TSnRejectEarlyEvtsMod.h
+K 25
+svn:wc:ra_dav:version-url
+V 73
+/svn/repos/!svn/ver/1107/snowShovel/trunk/sigproc/TSnRejectEarlyEvtsMod.h
+END
+TSnFindEvtNumLimitsMod.cxx
+K 25
+svn:wc:ra_dav:version-url
+V 75
+/svn/repos/!svn/ver/854/snowShovel/trunk/sigproc/TSnFindEvtNumLimitsMod.cxx
+END
+TSnFFTCalcMod.cxx
+K 25
+svn:wc:ra_dav:version-url
+V 67
+/svn/repos/!svn/ver/1110/snowShovel/trunk/sigproc/TSnFFTCalcMod.cxx
+END
+TSnShiftCalWvDataMod.cxx
+K 25
+svn:wc:ra_dav:version-url
+V 74
+/svn/repos/!svn/ver/1084/snowShovel/trunk/sigproc/TSnShiftCalWvDataMod.cxx
+END
+TSnBasicEvtSelMod.cxx
+K 25
+svn:wc:ra_dav:version-url
+V 71
+/svn/repos/!svn/ver/1065/snowShovel/trunk/sigproc/TSnBasicEvtSelMod.cxx
+END
+TSnGCanvasSaveDialog.h
+K 25
+svn:wc:ra_dav:version-url
+V 71
+/svn/repos/!svn/ver/854/snowShovel/trunk/sigproc/TSnGCanvasSaveDialog.h
+END
+TSnFPNCalcMod.cxx
+K 25
+svn:wc:ra_dav:version-url
+V 66
+/svn/repos/!svn/ver/926/snowShovel/trunk/sigproc/TSnFPNCalcMod.cxx
+END
+TSnPlotPowerReadingsMod.cxx
+K 25
+svn:wc:ra_dav:version-url
+V 76
+/svn/repos/!svn/ver/959/snowShovel/trunk/sigproc/TSnPlotPowerReadingsMod.cxx
+END
+TSnPlotEvtRateMod.cxx
+K 25
+svn:wc:ra_dav:version-url
+V 71
+/svn/repos/!svn/ver/1003/snowShovel/trunk/sigproc/TSnPlotEvtRateMod.cxx
+END
+TSnDigitizerCalibMod.h
+K 25
+svn:wc:ra_dav:version-url
+V 71
+/svn/repos/!svn/ver/897/snowShovel/trunk/sigproc/TSnDigitizerCalibMod.h
+END
+TSnEvtGuiSeleFrame.h
+K 25
+svn:wc:ra_dav:version-url
+V 69
+/svn/repos/!svn/ver/874/snowShovel/trunk/sigproc/TSnEvtGuiSeleFrame.h
+END
+TSnRejectBadVoltTimesMod.h
+K 25
+svn:wc:ra_dav:version-url
+V 75
+/svn/repos/!svn/ver/959/snowShovel/trunk/sigproc/TSnRejectBadVoltTimesMod.h
+END
+TSnMakeShiftTree.h
+K 25
+svn:wc:ra_dav:version-url
+V 68
+/svn/repos/!svn/ver/1084/snowShovel/trunk/sigproc/TSnMakeShiftTree.h
+END
+TSnFindTimeLimitsMod.cxx
+K 25
+svn:wc:ra_dav:version-url
+V 73
+/svn/repos/!svn/ver/854/snowShovel/trunk/sigproc/TSnFindTimeLimitsMod.cxx
+END
+TSnFPNSubMod.h
+K 25
+svn:wc:ra_dav:version-url
+V 63
+/svn/repos/!svn/ver/854/snowShovel/trunk/sigproc/TSnFPNSubMod.h
+END
+TSnRejectBadClocksMod.cxx
+K 25
+svn:wc:ra_dav:version-url
+V 74
+/svn/repos/!svn/ver/959/snowShovel/trunk/sigproc/TSnRejectBadClocksMod.cxx
+END
+TSnSaveCalibDataMod.cxx
+K 25
+svn:wc:ra_dav:version-url
+V 73
+/svn/repos/!svn/ver/1127/snowShovel/trunk/sigproc/TSnSaveCalibDataMod.cxx
+END
+TSnEvtGuiMainFrame.cxx
+K 25
+svn:wc:ra_dav:version-url
+V 71
+/svn/repos/!svn/ver/874/snowShovel/trunk/sigproc/TSnEvtGuiMainFrame.cxx
+END
+TSnEvtGuiDataGuru.h
+K 25
+svn:wc:ra_dav:version-url
+V 68
+/svn/repos/!svn/ver/854/snowShovel/trunk/sigproc/TSnEvtGuiDataGuru.h
+END
+TSnFindWaveformEnvelopeMod.cxx
+K 25
+svn:wc:ra_dav:version-url
+V 80
+/svn/repos/!svn/ver/1136/snowShovel/trunk/sigproc/TSnFindWaveformEnvelopeMod.cxx
+END
+TSnEvtGuiCanvFrame.cxx
+K 25
+svn:wc:ra_dav:version-url
+V 71
+/svn/repos/!svn/ver/854/snowShovel/trunk/sigproc/TSnEvtGuiCanvFrame.cxx
+END
+TSnFindEvtNumLimitsMod.h
+K 25
+svn:wc:ra_dav:version-url
+V 73
+/svn/repos/!svn/ver/854/snowShovel/trunk/sigproc/TSnFindEvtNumLimitsMod.h
+END
+TSnFFTCalcMod.h
+K 25
+svn:wc:ra_dav:version-url
+V 65
+/svn/repos/!svn/ver/1110/snowShovel/trunk/sigproc/TSnFFTCalcMod.h
+END
+TSnShiftCalWvDataMod.h
+K 25
+svn:wc:ra_dav:version-url
+V 72
+/svn/repos/!svn/ver/1084/snowShovel/trunk/sigproc/TSnShiftCalWvDataMod.h
+END
+TSnBasicEvtSelMod.h
+K 25
+svn:wc:ra_dav:version-url
+V 69
+/svn/repos/!svn/ver/1065/snowShovel/trunk/sigproc/TSnBasicEvtSelMod.h
+END
+TSnRawTreeMaker.cxx
+K 25
+svn:wc:ra_dav:version-url
+V 68
+/svn/repos/!svn/ver/941/snowShovel/trunk/sigproc/TSnRawTreeMaker.cxx
+END
+TSnFPNCalcMod.h
+K 25
+svn:wc:ra_dav:version-url
+V 64
+/svn/repos/!svn/ver/926/snowShovel/trunk/sigproc/TSnFPNCalcMod.h
+END
+TSnFilterWaveformMod.cxx
+K 25
+svn:wc:ra_dav:version-url
+V 74
+/svn/repos/!svn/ver/1110/snowShovel/trunk/sigproc/TSnFilterWaveformMod.cxx
+END
+TSnPlotAdcDists.cxx
+K 25
+svn:wc:ra_dav:version-url
+V 69
+/svn/repos/!svn/ver/1008/snowShovel/trunk/sigproc/TSnPlotAdcDists.cxx
+END
+TSnPlotPowerReadingsMod.h
+K 25
+svn:wc:ra_dav:version-url
+V 74
+/svn/repos/!svn/ver/959/snowShovel/trunk/sigproc/TSnPlotPowerReadingsMod.h
+END
+TSnCalDatModule.cxx
+K 25
+svn:wc:ra_dav:version-url
+V 69
+/svn/repos/!svn/ver/1092/snowShovel/trunk/sigproc/TSnCalDatModule.cxx
+END
+TSnPlotEvtRateMod.h
+K 25
+svn:wc:ra_dav:version-url
+V 68
+/svn/repos/!svn/ver/854/snowShovel/trunk/sigproc/TSnPlotEvtRateMod.h
+END
+sigprocLinkDef.h
+K 25
+svn:wc:ra_dav:version-url
+V 66
+/svn/repos/!svn/ver/1133/snowShovel/trunk/sigproc/sigprocLinkDef.h
+END
+TSnFindTimeLimitsMod.h
+K 25
+svn:wc:ra_dav:version-url
+V 71
+/svn/repos/!svn/ver/854/snowShovel/trunk/sigproc/TSnFindTimeLimitsMod.h
+END
+TSnCalcAbsTimeMod.cxx
+K 25
+svn:wc:ra_dav:version-url
+V 71
+/svn/repos/!svn/ver/1107/snowShovel/trunk/sigproc/TSnCalcAbsTimeMod.cxx
+END
+TSnRejectBadClocksMod.h
+K 25
+svn:wc:ra_dav:version-url
+V 72
+/svn/repos/!svn/ver/959/snowShovel/trunk/sigproc/TSnRejectBadClocksMod.h
+END
+TSnStopFindRms.cxx
+K 25
+svn:wc:ra_dav:version-url
+V 68
+/svn/repos/!svn/ver/1090/snowShovel/trunk/sigproc/TSnStopFindRms.cxx
+END
+TSnEvtGuiMainFrame.h
+K 25
+svn:wc:ra_dav:version-url
+V 69
+/svn/repos/!svn/ver/854/snowShovel/trunk/sigproc/TSnEvtGuiMainFrame.h
+END
+TSnPlotWaveformsMod.cxx
+K 25
+svn:wc:ra_dav:version-url
+V 73
+/svn/repos/!svn/ver/1003/snowShovel/trunk/sigproc/TSnPlotWaveformsMod.cxx
+END
+TSnSaveCalibDataMod.h
+K 25
+svn:wc:ra_dav:version-url
+V 71
+/svn/repos/!svn/ver/1128/snowShovel/trunk/sigproc/TSnSaveCalibDataMod.h
+END
+TSnFindWaveformEnvelopeMod.h
+K 25
+svn:wc:ra_dav:version-url
+V 78
+/svn/repos/!svn/ver/1133/snowShovel/trunk/sigproc/TSnFindWaveformEnvelopeMod.h
+END
+TSnEvtGuiCanvFrame.h
+K 25
+svn:wc:ra_dav:version-url
+V 69
+/svn/repos/!svn/ver/854/snowShovel/trunk/sigproc/TSnEvtGuiCanvFrame.h
+END
+TSnRejectEarlyEvtsMod.cxx
+K 25
+svn:wc:ra_dav:version-url
+V 75
+/svn/repos/!svn/ver/1107/snowShovel/trunk/sigproc/TSnRejectEarlyEvtsMod.cxx
+END
+TSnRawTreeMaker.h
+K 25
+svn:wc:ra_dav:version-url
+V 66
+/svn/repos/!svn/ver/854/snowShovel/trunk/sigproc/TSnRawTreeMaker.h
+END
+TSnFilterWaveformMod.h
+K 25
+svn:wc:ra_dav:version-url
+V 72
+/svn/repos/!svn/ver/1095/snowShovel/trunk/sigproc/TSnFilterWaveformMod.h
+END
+TSnGCanvasSaveDialog.cxx
+K 25
+svn:wc:ra_dav:version-url
+V 73
+/svn/repos/!svn/ver/854/snowShovel/trunk/sigproc/TSnGCanvasSaveDialog.cxx
+END
+TSnPlotAdcDists.h
+K 25
+svn:wc:ra_dav:version-url
+V 67
+/svn/repos/!svn/ver/1003/snowShovel/trunk/sigproc/TSnPlotAdcDists.h
+END
+TSnCalDatModule.h
+K 25
+svn:wc:ra_dav:version-url
+V 67
+/svn/repos/!svn/ver/1092/snowShovel/trunk/sigproc/TSnCalDatModule.h
+END
+TSnDigitizerCalibMod.cxx
+K 25
+svn:wc:ra_dav:version-url
+V 73
+/svn/repos/!svn/ver/897/snowShovel/trunk/sigproc/TSnDigitizerCalibMod.cxx
+END
+sigproc.mk
+K 25
+svn:wc:ra_dav:version-url
+V 60
+/svn/repos/!svn/ver/1133/snowShovel/trunk/sigproc/sigproc.mk
+END
+TSnEvtGuiSeleFrame.cxx
+K 25
+svn:wc:ra_dav:version-url
+V 71
+/svn/repos/!svn/ver/874/snowShovel/trunk/sigproc/TSnEvtGuiSeleFrame.cxx
+END
