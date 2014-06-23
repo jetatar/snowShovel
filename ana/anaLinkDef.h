@@ -27,8 +27,8 @@
 #pragma link C++ class TSnPlotCCMod+;
 #pragma link C++ class TSnRunEvtOut+;
 #pragma link C++ class TSnPlotCorrelations+;
-#pragma link C++ class TSnNumHighFFTBins+;
-#pragma link C++ class TSnSelEvtsOnHighFFTBins+;
+#pragma link C++ class TSnNumHighFFTBinsMod+;
+#pragma link C++ class TSnPlotNumHighFFTBins+;
 #pragma link C++ class TSnCountEventsMod+;
 
 #pragma link C++ class std::pair<UInt_t, UInt_t>;

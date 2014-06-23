@@ -39,8 +39,8 @@ extern void G__set_cpp_environmentG__ana();
 #include "ana/TSnSelEvtsOnCC.h"
 #include "ana/TSnPlotCCMod.h"
 #include "ana/TSnPlotCorrelations.h"
-#include "ana/TSnNumHighFFTBins.h"
-#include "ana/TSnSelEvtsOnHighFFTBins.h"
+#include "ana/TSnNumHighFFTBinsMod.h"
+#include "ana/TSnPlotNumHighFFTBins.h"
 #include "ana/TSnCountEventsMod.h"
 #include <algorithm>
 namespace std { }
@@ -100,8 +100,8 @@ extern G__linked_taginfo G__G__anaLN_reverse_iteratorlEvectorlEpairlEunsignedsPi
 extern G__linked_taginfo G__G__anaLN_TSnPlotCCMod;
 extern G__linked_taginfo G__G__anaLN_TSnPlotCorrelations;
 extern G__linked_taginfo G__G__anaLN_TSnCalFFTData;
-extern G__linked_taginfo G__G__anaLN_TSnNumHighFFTBins;
-extern G__linked_taginfo G__G__anaLN_TSnSelEvtsOnHighFFTBins;
+extern G__linked_taginfo G__G__anaLN_TSnNumHighFFTBinsMod;
+extern G__linked_taginfo G__G__anaLN_TSnPlotNumHighFFTBins;
 extern G__linked_taginfo G__G__anaLN_TSnCountEventsMod;
 
 /* STUB derived class for protected member access */
