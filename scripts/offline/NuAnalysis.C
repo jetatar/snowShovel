@@ -57,7 +57,44 @@ void NuAnalysis( void )
         return;
     }
 
+    TAMSelector* sel        = new TAMSelector;
+
+    // Select THERMAL events
+    TSnBasicEvtSelMod*  bes = new TSnBasicEvtSelMod( "BES" );
+    bes->GetTrgBits().EnableTrig( TSnTrgInfo::kThermal );
+    bes->SetCheckCRC( kTRUE );
+
+    // Remove events with a sharply peaked FFT distribution.
+    TSnSelEvtsOnHMFFTWidth
 
 
+    // PROCESS events.
+    Printf( "Processing events..." );
+    nt->Process( sel, "" );
+    Printf( "Finished processing events." );
+
+    // Write OUTPUT
+    TAMOutput* outmod = sel->GetModOutput( );
+    
+    if( outmod != 0 )
+    {
+        Printf( "Writing output..." );
+        fout = TFile::Open( outfn, "recreate" );
+
+        fout->cd( );
+        outmod->Write( );
+
+        delete fout;
+        fout = 0;
+
+        Printf( "Done writing output." );
+    }
+    else
+    {
+        Printf( "!!! Can't get output list from selector!." );
+    }
+
+    delete sel;
+    sel = 0;
 }
 

@@ -14,8 +14,8 @@ anaDH := \
 	TSnSelEvtsOnCC.h \
 	TSnPlotCCMod.h \
 	TSnPlotCorrelations.h \
-	TSnNumHighFFTBins.h \
-	TSnSelEvtsOnHighFFTBins.h \
+	TSnNumHighFFTBinsMod.h \
+	TSnPlotNumHighFFTBins.h \
 	TSnCountEventsMod.h \
 
 anaLIBEXTRA := \
