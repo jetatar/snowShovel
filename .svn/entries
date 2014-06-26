@@ -1,230 +1,0 @@
-10
-
-dir
-1140
-https://arianna.ps.uci.edu/svn/repos/snowShovel/trunk
-https://arianna.ps.uci.edu/svn/repos
-
-
-
-2014-03-14T03:43:23.217677Z
-1140
-cjreed
-has-props
-
-
-svn:externals
-
-
-
-
-
-
-
-
-
-
-e5861a0a-4bf6-4d27-ae03-149b890d7f82
-
-recodat
-dir
-
-configure
-file
-
-
-
-
-2013-11-21T02:10:35.318169Z
-6a759c28856da67c93e04bd5f465b6ab
-2013-07-11T05:40:01.803416Z
-525
-cjreed
-has-props
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-735
-
-par
-dir
-
-include
-dir
-
-online
-dir
-
-db
-dir
-
-pqdb
-dir
-
-scripts
-dir
-
-reco
-dir
-
-loaders
-dir
-
-ana
-dir
-
-sigprocdat
-dir
-
-build
-dir
-
-evdat
-dir
-
-DOC
-dir
-
-lib
-dir
-
-commacts
-dir
-
-sigproc
-dir
-
-add-prog.sh
-file
-
-
-
-
-2013-11-21T02:10:35.324168Z
-f12ea4a271160850a3db16963c0bd05a
-2013-07-11T05:40:01.803416Z
-525
-cjreed
-has-props
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-1357
-
-prog
-dir
-
-bin
-dir
-
-Modules
-file
-
-
-
-
-2014-03-01T23:00:35.626465Z
-4d1e747ed63c0e14ea3ad38460e5bcb0
-2014-03-01T06:04:10.288186Z
-1112
-cjreed
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-591
-
-geo
-dir
-
-util
-dir
-
-Makefile
-file
-
-
-
-
-2013-11-21T02:10:35.332167Z
-79341c619f4f7c46f09205617768c818
-2013-07-11T05:40:01.803416Z
-525
-cjreed
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-95
-
-dbdat
-dir
-
