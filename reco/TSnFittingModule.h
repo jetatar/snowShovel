@@ -44,8 +44,8 @@ class TSnFittingModule : public TAModule {
  public:
    TSnFittingModule() : fMini(0) {}
    TSnFittingModule(const Char_t* name, const Char_t* title,
-                    const Char_t* miniName="Minuit2",
-                    const Char_t* algoName="Migrad");
+                    const Char_t* miniName/*="Minuit2"*/,
+                    const Char_t* algoName/*="Migrad"*/);
    virtual ~TSnFittingModule();
 
    void AssertMini(const Char_t* loc) const;

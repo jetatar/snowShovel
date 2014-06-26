@@ -17,6 +17,7 @@ class TSnGeoStnSite : public TGeoVolumeAssembly {
    const TGeoNode* GetLPDANode(const UChar_t ch) const;
    
    void            SetLPDAPosition(const UChar_t ch, TVector3& pos) const;
+   void            SetLPDANormalVec(const UChar_t ch, TVector3& norm) const;
    
    ClassDef(TSnGeoStnSite,1); // a station site geometry (DAQ box, antennas, etc)
 };

@@ -52,12 +52,12 @@ void TSnSaveRecoResultsMod::MakeBranches() {
    
    TIter nro(fRecoObjNames.MakeIterator());
    TObject* nm(0);
-   //TSnRecoResult* r(0);
    TObject* r(0);
+   TSnRecoResultWrapper* myr(0);
    while ( (nm=nro())!=0 ) {
-      //r = dynamic_cast<TSnRecoResult*>( FindObjThisEvt(nm->GetName()) );
+      myr = dynamic_cast<TSnRecoResultWrapper*>(fRecoObjNames.GetValue(nm));
       r = FindObjThisEvt(nm->GetName());
-      if (r!=0) {
+      if ((r!=0) && (myr!=0)) {
          const TClass* c = r->IsA();
          if (c!=0) {
             Int_t split = fSplit;
@@ -68,10 +68,7 @@ void TSnSaveRecoResultsMod::MakeBranches() {
             
             // reset this entry to a non-null version of this object
             // and use TClass to get the correct type of reco result
-            fRecoObjNames.Remove(nm);
-            TSnRecoResultWrapper* myr = new TSnRecoResultWrapper(
-               reinterpret_cast<TObject*>(c->New()) );
-            fRecoObjNames.Add(nm, myr);
+            myr->fRR = reinterpret_cast<TObject*>(c->New());
             
             // make the branch for this reconstruction result
             fOt->Branch(r->GetName(), c->GetName(),
@@ -159,6 +156,7 @@ void TSnSaveRecoResultsMod::Process() {
 }
 
 void TSnSaveRecoResultsMod::SaveRecoResult(const Char_t* name) {
-   fRecoObjNames.Add(new TObjString(name), 0);
+   fRecoObjNames.Add(new TObjString(name),
+                     new TSnRecoResultWrapper(0));
 }
 

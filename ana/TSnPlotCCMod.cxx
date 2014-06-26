@@ -129,7 +129,7 @@ void TSnPlotCCMod::Process( )
             hhigh->Fill( nhighbins );
             hNHighPksAllCh->Fill( nhighbins );
 
-            maxElem     = fft->GetFreqData( std::distance(pfft, peakValue) ); 
+            maxElem     = fft->GetFrequency( std::distance(pfft, peakValue) ); 
             TH1F* hpeak = dynamic_cast<TH1F*>( hFFTPeak->At(ch) );
 
             hpeak->Fill( maxElem ); 

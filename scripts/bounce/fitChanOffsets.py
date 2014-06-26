@@ -1,7 +1,7 @@
 import os,sys
 import ROOT
 
-def fitChanOffsets(ntn, dbn, infn, outfn, minimizer, algo, filt):
+def fitChanOffsets(ntn, dbn, infn, outfn, minimizer, algo, filt, envnm, stpshft):
     
     nt = ROOT.TChain(ntn)
     nt.Add(infn)
@@ -16,10 +16,15 @@ def fitChanOffsets(ntn, dbn, infn, outfn, minimizer, algo, filt):
     stopnm = "{0}.".format(sfr.GetStopPosnName().Data())
     sfr.SetStopPosnName(stopnm)
     
-    shiftnm  = dbn.rstrip(".")
-    shiftnm += "Shifted."
-    shd = ROOT.TSnShiftCalWvDataMod("ShiftDataByStops", dbn, shiftnm)
-    shd.SetStopPosnName(stopnm)
+    shiftnm = None
+    shd = None
+    if (stpshft):
+        shiftnm  = dbn.rstrip(".")
+        shiftnm += "Shifted."
+        shd = ROOT.TSnShiftCalWvDataMod("ShiftDataByStops", dbn, shiftnm)
+        shd.SetStopPosnName(stopnm)
+    else:
+        shiftnm = dbn
     
     # filter out high frequencies
     fltfcn = ROOT.TF1("fltfcn","gaus(0) + gaus(3)", -1.1, 1.1)
@@ -35,10 +40,19 @@ def fitChanOffsets(ntn, dbn, infn, outfn, minimizer, algo, filt):
     cdnm = flt.GetFltDatName().Data()
     if (filt==False):
         cdnm = shiftnm
+
+    # find envelopes
+    menv = None
+    if (envnm!=None):
+        menv = ROOT.TSnFindWaveformEnvelopeMod("EnvMod", cdnm, envnm)
+        #menv.SetVerbosity(menv.kDebugEnv)
+        
     
     # determine inter-channel correlations
     ctc = ROOT.TSnChanTimeCorlMod("ChanTimeCorl",
                                   cdnm)
+    if (envnm!=None):
+        ctc.SetEnvelopeName(envnm)
     
     # fit to find the best offsets between channels
     fco = ROOT.TSnFitChanOffsetMod("FitChanOffsets",
@@ -60,14 +74,32 @@ def fitChanOffsets(ntn, dbn, infn, outfn, minimizer, algo, filt):
     
     
     bes.Add(sfr)
-    sfr.Add(shd)
+    if (stpshft):
+        sfr.Add(shd)
     if (filt):
         print "filtering data"
-        shd.Add(flt)
-        flt.Add(ctc)
+        if (stpshft):
+            shd.Add(flt)
+        else:
+            sfr.Add(flt)
+        if (envnm!=None):
+            flt.Add(menv)
+            menv.Add(ctc)
+        else:
+            flt.Add(ctc)
     else:
         print "not filtering"
-        shd.Add(ctc)
+        if (envnm!=None):
+            if (stpshft):
+                shd.Add(menv)
+            else:
+                sfr.Add(menv)
+            menv.Add(ctc)
+        else:
+            if (stpshft):
+                shd.Add(ctc)
+            else:
+                sfr.Add(ctc)
     ctc.Add(fco)
     fco.Add(scd)
     fco.Add(srr)
@@ -92,7 +124,7 @@ def fitChanOffsets(ntn, dbn, infn, outfn, minimizer, algo, filt):
 
 if __name__=="__main__":
     if (len(sys.argv)<4):
-        print "Usage: python fitChanOffsets.py [input filename (w/ wildcards)] [tree type] [output filename] (minimizer) (algorithm) (apply filter True/False)"
+        print "Usage: python fitChanOffsets.py [input filename (w/ wildcards)] [tree type] [output filename] (minimizer) (algorithm) (apply filter True/False)  (use envelopes True/False) (shift stops to end True/False)"
         print "   tree type = 0 for raw, 1 for FPN sub, 2 for calibrated amp out"
         sys.exit()
 
@@ -126,8 +158,18 @@ if __name__=="__main__":
     if (len(sys.argv)>=7):
         if (sys.argv[6]=='False'):
             filt = False
+
+    envnm = None
+    if (len(sys.argv)>=8):
+        if (sys.argv[7]=='True'):
+            envnm = "{0}Env".format(dbn)
     
-    fitChanOffsets(ntn, dbn, infn, outfn, minimizer, algo, filt)
+    stpshft = True
+    if (len(sys.argv)>=9):
+        if (sys.argv[8]=='False'):
+            stpshft = False
+    
+    fitChanOffsets(ntn, dbn, infn, outfn, minimizer, algo, filt, envnm, stpshft)
     
 
 

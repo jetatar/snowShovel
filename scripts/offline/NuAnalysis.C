@@ -15,14 +15,14 @@
 
 #include "TSnSaveCalibDataMod.h"
 #include "TSnBasicEvtSelMod.h"
-#include "TSnRejectEarlyEvtsMod.h"
-#include "TSnSelEvtsOnCC.h"
-#include "TSnCluster.h"
-#include "TSnConfigTreeLoader.h"
+//#include "TSnRejectEarlyEvtsMod.h"
+//#include "TSnSelEvtsOnCC.h"
+//#include "TSnCluster.h"
+//#include "TSnConfigTreeLoader.h"
 #include "TSnCalWvData.h"
-#include "TSnSelEvtsOnHighFFTBins.h"
-#include "TSnCorrelateWavesMod.h"
-#include "TSnRejectBadClocksMod.h"
+#include "TSnPlotNumHighFFTBins.h"
+//#include "TSnCorrelateWavesMod.h"
+//#include "TSnRejectBadClocksMod.h"
 
 #include "NSnConstants.h"
 
@@ -65,8 +65,12 @@ void NuAnalysis( void )
     bes->SetCheckCRC( kTRUE );
 
     // Remove events with a sharply peaked FFT distribution.
-    TSnSelEvtsOnHMFFTWidth
+    TSnPlotNumHighFFTBins* nhfft = 
+                            new TSnPlotNumHighFFTBins( "PlotNumHighFFTBins" );
 
+    // Order event processing modules 
+    sel->AddInput( bes );
+    bes->Add( nhfft );
 
     // PROCESS events.
     Printf( "Processing events..." );

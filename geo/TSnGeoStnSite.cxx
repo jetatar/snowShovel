@@ -71,3 +71,19 @@ void TSnGeoStnSite::SetLPDAPosition(const UChar_t ch, TVector3& pos) const {
                                     "No LPDA node for ch=%hhu", ch));
    }
 }
+
+void TSnGeoStnSite::SetLPDANormalVec(const UChar_t ch, TVector3& norm) const {
+   // set the vector normal to the LPDA plane
+   // for the specified channel into the vector 'norm'.
+   // see GetLPDANode for channel indexing notes
+   const TGeoNode* nch = GetLPDANode(ch);
+   if (nch!=0) {
+      const Double_t o[3] = {0,1,0}; // in the local frame
+      Double_t x[3]       = {0,0,0}; // in the global frame
+      nch->LocalToMasterVect(o, x);
+      norm.SetXYZ(x[0],x[1],x[2]);
+   } else {
+      throw std::runtime_error(Form("<TSnGeoStnSite::SetLPDAPosition>: "
+                                    "No LPDA node for ch=%hhu", ch));
+   }
+}

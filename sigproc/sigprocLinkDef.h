@@ -41,9 +41,28 @@
 #pragma link C++ class TSnStopFindRms+;
 #pragma link C++ class TSnShiftCalWvDataMod+;
 #pragma link C++ class TSnMakeShiftTree+;
-#pragma link C++ class TSnPruneBadEvtsMod+;
 #pragma link C++ class TSnFFTCalcMod+;
 #pragma link C++ class TSnFindWaveformEnvelopeMod+;
+#pragma link C++ class TSnSmoothDataLstSqrCnvMod+;
+#pragma link C++ class TSnTreeBuilderMod+;
+#pragma link C++ class TSnWaveletDenoiseMod+;
+
+// define some common branches so that these will work in CINT or pyroot
+#pragma link C++ function TSnTreeBuilderMod::CopyBranchFromTree<TSnEventMetadata>;
+#pragma link C++ function TSnTreeBuilderMod::CopyBranchFromTree<TSnEventHeader>;
+#pragma link C++ function TSnTreeBuilderMod::CopyBranchFromTree<TSnClockSetInfo>;
+#pragma link C++ function TSnTreeBuilderMod::CopyBranchFromTree<TSnHeartbeat>;
+#pragma link C++ function TSnTreeBuilderMod::CopyBranchFromTree<TSnPowerReading>;
+#pragma link C++ function TSnTreeBuilderMod::CopyBranchFromTree<TSnRawWaveform>;
+#pragma link C++ function TSnTreeBuilderMod::CopyBranchFromTree<TSnDAQConfig>;
+#pragma link C++ function TSnTreeBuilderMod::CopyBranchFromTree<TSnRunInfo>;
+#pragma link C++ function TSnTreeBuilderMod::CopyBranchFromTree<TSnNetAdrSet>;
+#pragma link C++ function TSnTreeBuilderMod::CopyBranchFromTree<TSnCalWvData>;
+#pragma link C++ function TSnTreeBuilderMod::AddBranchForEvtObj<TSnCalWvData>;
+#pragma link C++ function TSnTreeBuilderMod::AddBranchForEvtObj<TSnCalFFTData>;
+#pragma link C++ function TSnTreeBuilderMod::AddBranchForEvtObj<TSnStopPosnSet>;
+#pragma link C++ function TSnTreeBuilderMod::AddBranchForEvtObj< TParameter<Double_t> >;
+#pragma link C++ function TSnTreeBuilderMod::AddBranchForEvtObj<TObjArray>;
 
 // define the one we need, that ROOT didn't define
 #pragma link C++ class TParameter<UInt_t>+;

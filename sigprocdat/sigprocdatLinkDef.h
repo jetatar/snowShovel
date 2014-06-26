@@ -26,11 +26,17 @@
 #pragma link C++ class TSnCalWvData+;
 #pragma link C++ class TSnInterp1DWvData+;
 #pragma link C++ class TSnInterp1DSpline3+;
+#pragma link C++ class TSnInterp1DLstSqConvo+;
 #pragma link C++ class TSnStopPosnSet+;
 // TSnCalFFTData has a cache variable that we need to zero out upon a read
 // even tho it's not streamed, so use a read directive.
 #pragma link C++ class TSnCalFFTData+;
 #pragma read sourceClass="TSnCalFFTData" targetClass="TSnCalFFTData" source="" version="[1-]" target="" code="{ newObj->ClearCache(); }" 
+#pragma link C++ class TSnWavelet+;
+#pragma link C++ class TSnWaveletHaar+;
+#pragma link C++ class TSnWaveletDaub4+;
+#pragma link C++ class TSnWaveletDaub12+;
+#pragma link C++ class TSnWaveletDaub20+;
 
 
 

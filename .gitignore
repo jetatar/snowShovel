@@ -1,0 +1,17 @@
+*.[oad]
+*.so
+*.swp
+*.par
+*G__*
+*.rootmap
+*.svn-base
+.svn
+sigprocdat/.svn/
+util/.svn/
+sigproc/.svn/
+recodat/.svn/
+reco/.svn/
+prog/.svn/
+pqdb/.svn/
+par/.svn/
+*/.svn/

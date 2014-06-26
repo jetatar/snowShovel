@@ -4,13 +4,21 @@
 #include <Math/Functor.h>
 #include <TObjArray.h>
 #include <TMath.h>
+#include <TSystem.h>
+#include <TCanvas.h>
+#include <TGraph.h>
+#include <TSpline.h>
 
 #include "TSnInterp1DWvData.h"
 #include "TSnRecoChanOffsets.h"
 #include "NSnChanCorl.h"
 #include "NSnConstants.h"
+#include "TSnPlotBrowser.h"
+#include "TSnInterp1DSpline3.h"
 
 ClassImp(TSnFitChanOffsetMod);
+
+const UInt_t TSnFitChanOffsetMod::kDebugCorlFit = 100;
 
 Double_t TSnFitChanOffsetMod::GetChanDelayLL(const Double_t* dts) const {
    TArrayD d(TSnRecoChanOffsets::kChCmbs, dts);
@@ -76,6 +84,53 @@ void TSnFitChanOffsetMod::Process() {
       
       AddObjThisEvt(off);
 
+
+      if (GetVerbosity()>=kDebugCorlFit) {
+         TCanvas* c = new TCanvas("cfco","cfco - fit chan offsets",1200,1000);
+         TSnPlotBrowser* pb = new TSnPlotBrowser("fcopb");
+         pb->SetCanvas(c);
+         TObjArray graphs;
+         graphs.SetOwner(kTRUE);
+         static const Int_t cols[NSnConstants::kNchans] =
+               { kOrange+7, kAzure-2, kViolet-1, kGreen+2 };
+         static const Int_t mrk = 7;
+         Int_t pi=0;
+         for (UChar_t ch=0; ch<NSnConstants::kNchans; ++ch) {
+            for (UChar_t xc=0; xc<ch; xc++) {
+               pi = TSnRecoChanOffsets::IndexFor(ch, xc);
+               
+               TSnInterp1DSpline3* s = dynamic_cast<TSnInterp1DSpline3*>(
+                  fCorl->At(pi));
+               if (s!=0) {
+                  s->GetSpline()->SetLineColor(cols[1]);
+                  s->GetSpline()->SetMarkerColor(cols[1]);
+                  s->GetSpline()->SetMarkerStyle(mrk);
+                  pb->AddPlotToSet("Corls",s,"pl",pi+1);
+                  
+                  TGraph* g = new TGraph;
+                  graphs.Add(g);
+                  g->SetMarkerStyle(24);
+                  g->SetPoint(0, par[pi], s->Eval(par[pi]));
+                  Printf("ch%hhu,xc%hhu dt=%g, cor=%g",ch,xc,par[pi],
+                         s->Eval(par[pi]));
+                  pb->AddPlotToSet("Corls",g,"p",pi+1);
+               }
+               
+            }
+         }
+         
+         pb->DrawButtonBar();
+         pb->DrawPlots("Corls");
+         if (c!=0) {
+            TObject* o(0);
+            while ( (o = c->WaitPrimitive())!=0 ) {
+               gSystem->ProcessEvents();
+            }
+            delete c;
+         }
+         delete pb;
+      } // end debug
+      
    } else {
       SendError(kAbortModule, "Process",
                 "Could not get channel correlation functions "

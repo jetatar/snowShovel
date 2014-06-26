@@ -32,9 +32,11 @@ sigprocDH := \
 	TSnStopFindRms.h \
 	TSnShiftCalWvDataMod.h \
 	TSnMakeShiftTree.h \
-	TSnPruneBadEvtsMod.h \
 	TSnFFTCalcMod.h \
 	TSnFindWaveformEnvelopeMod.h \
+	TSnSmoothDataLstSqrCnvMod.h \
+	TSnTreeBuilderMod.h \
+	TSnWaveletDenoiseMod.h \
 
 sigprocLIBEXTRA := \
 	`root-config --glibs` \
@@ -43,7 +45,20 @@ sigprocLIBEXTRA := \
 sigprocLIBDEP := \
 	sigprocdat dbdat evdat online util tam \
 
-# include TParameter so we can make the other parameter types
+# include files (TParameter) so we can put certain templates in the dictionary
 sigprocDHEXTRA := \
+	TSnEventMetadata.h \
+	TSnEventHeader.h \
+	TSnClockSetInfo.h \
+	TSnHeartbeat.h \
+	TSnPowerReading.h \
+	TSnRawWaveform.h \
+	TSnDAQConfig.h \
+	TSnRunInfo.h \
+	TSnNetAdrSet.h \
+	TSnCalWvData.h \
+	TSnCalFFTData.h \
+	TSnStopPosnSet.h \
 	TParameter.h \
+	TObjArray.h \
 

@@ -72,7 +72,7 @@ void makeCalibTree(const Char_t* infn,
    Printf("Calibrating from [%s].",nt->GetName());
 
    if (nt->GetEntries()<=0) {
-      Printf("Could not load the raw tree.");
+      Printf("Could not load the raw tree from [%s].",infn);
       return;
    }
    

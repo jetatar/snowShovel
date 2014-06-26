@@ -18,8 +18,14 @@ sigprocdatDH := \
 	TSnCalWvData.h \
 	TSnInterp1DWvData.h \
 	TSnInterp1DSpline3.h \
+	TSnInterp1DLstSqConvo.h \
 	TSnStopPosnSet.h \
 	TSnCalFFTData.h \
+	TSnWavelet.h \
+	TSnWaveletHaar.h \
+	TSnWaveletDaub4.h \
+	TSnWaveletDaub12.h \
+	TSnWaveletDaub20.h \
 
 sigprocdatLIBEXTRA := \
 	`root-config --glibs` \

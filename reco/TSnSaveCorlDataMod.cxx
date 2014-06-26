@@ -146,6 +146,7 @@ void TSnSaveCorlDataMod::SlaveBegin() {
    }
    
    fOt = new TTree(fOutTreeNm.Data(), fOutTreeTitle.Data());
+
    fOt->SetAutoSave();
    AddOutput(fOt);
 

@@ -22,18 +22,6 @@ class TH1;
 struct TSnMath {
    static const Double_t kSecPerDay;
    
-   template<typename FROM, typename TO>
-   static Bool_t IsSafeToCast(const FROM x);
-
-   template<typename FROM, typename TO>
-   static Bool_t AssertSafeToCast(const FROM x);   
-
-   template<typename FROM, typename TO>
-   static TO SafeCast(const FROM x) {
-      AssertSafeToCast<FROM, TO>(x);
-      return static_cast<TO>(x);
-   }
-
    template<typename Num_t>
    static
    void GetAveVarFast(const Num_t* const data, const UInt_t n,
@@ -135,6 +123,20 @@ struct TSnMath {
                                 const Num_t* const to,
                                 const Num_t fromVal,
                                 Num_t& toVal);
+
+   static inline
+   Double_t GenFactorial(const Int_t a, const Int_t b);
+
+   template<typename Num_t>
+   static
+   Double_t GramPolynomial(const Num_t x, const UInt_t m,
+                           const Int_t k, const UInt_t s);
+
+   static inline
+   Double_t LSqConvCoefficient(const Int_t i, const Int_t t,
+                               const UInt_t m, const UInt_t n,
+                               const UInt_t s);
+
    
    template<typename T>
    static
@@ -169,37 +171,6 @@ struct TSnMath {
    ClassDef(TSnMath, 0);
    
 };
-
-
-template<typename FROM, typename TO>
-inline
-Bool_t TSnMath::IsSafeToCast(const FROM x) {
-   // a helper function to check if it's ok to cast x of FROM
-   // type to a variable of TO type.
-   // the types FROM and TO should be fundamental (numerical)
-   // types.
-   // the function returns true if the value of x is contained
-   // in the valid range of a TO type
-   
-   const Bool_t ok = (x >= std::numeric_limits<TO>::min())
-                  && (x <= std::numeric_limits<TO>::max());
-   return ok;
-}
-
-template<typename FROM, typename TO>
-inline
-Bool_t TSnMath::AssertSafeToCast(const FROM x) {
-   // throw an exception if IsSafeToCast returns false.
-   const Bool_t ok = IsSafeToCast<FROM, TO>(x);
-   if (ok==kFALSE) {
-      TString er("<TSnMath::AssertSafeToCast>: Value [");
-      er += x;
-      er += Form("] of type [%s] cannot be cast to type [%s].",
-                 typeid(x).name(), typeid(TO).name());
-      throw std::out_of_range(er.Data());
-   }
-   return ok;
-}
 
 template<typename Num_t>
 void TSnMath::GetAveVarFast(const Num_t* const data, const UInt_t n,
@@ -461,6 +432,94 @@ Bool_t TSnMath::SearchOneToOneMapping(const Long64_t n,
       }
    }
    return kFALSE;
+}
+
+Double_t TSnMath::GenFactorial(const Int_t a, const Int_t b) {
+   // calculate the "generalized" factorial (a)*(a-1)*...*(a-(b-1))
+   // i.e. GenFactorial(7,3) = 7*6*5 = 210
+   Double_t f = 1.0;
+   const Int_t end = a-b;
+   if ( (end>-1) && (end<=a) ) {
+      for (Int_t i=a; i>end; --i) {
+         f *= i;
+      }
+   } else {
+      throw std::invalid_argument(Form("<TSnMath::GenFactorial>: "
+                                       "Invalid argument(s) a=%d, b=%d.",
+                                       a,b));
+   }
+   return f;
+}
+
+template<typename Num_t>
+Double_t TSnMath::GramPolynomial(const Num_t x, const UInt_t m, 
+                                 const Int_t k, const UInt_t s) {
+   // calculate the s'th derivative of the Gram (discrete Chebyshev)
+   // polynomial of order k evaluated at x over 2m+1 points
+   //
+   // note that this is recursive, so "small" values of m and k are wise
+   //
+   // algorith from Analytical Chemistry, vol 62, no 6, 1990, pg570
+   
+   if (k>0) {
+      const Int_t d = (m<<1) - k + 1;
+      if (d!=0) {
+         
+         const Double_t e = k*d;
+         const Double_t pk1s  = GramPolynomial(x,m,k-1,s);
+         const Double_t pk1s1 = GramPolynomial(x,m,k-1,s-1);
+         const Double_t pk2s  = GramPolynomial(x,m,k-2,s);
+         
+         const Double_t a = static_cast<Double_t>((k<<2)-2) / e;
+         const Double_t b = a * ( (x*pk1s) + (s*pk1s1) );
+         const Double_t c = (k-1)*((m<<1)+k) / e;
+         
+         return (b - (c * pk2s));
+         
+      } else {
+         throw std::invalid_argument(Form("<TSnMath::GramPolynomial>: "
+                                          "m=%u and k=%hhu "
+                                          "lead to zero in denominator.",
+                                          m, k));
+      }
+      
+   } else { 
+      if ( (k==0) && (s==0) ) {
+         return 1.0;
+      } else {
+         return 0.0;
+      }
+   }
+}
+
+Double_t TSnMath::LSqConvCoefficient(const Int_t i, const Int_t t,
+                                     const UInt_t m, const UInt_t n,
+                                     const UInt_t s) {
+   // calculate the coefficient for the i'th data point of the t'th
+   // least-square fit point gram polynomial, of the s'th derivative,
+   // over 2m+1 points, of order n
+   //
+   // this is used to fit gram polynomials in successive (small) windows
+   // of the data. with s=0, the data itself is simply smoothed. with
+   // s=1, a smooth derivative of the data can be obtained without the
+   // noise associated with finite difference numerical derivatives.
+   //
+   // (the least square "fit" is solved analytically)
+   //
+   // algorith from Analytical Chemistry, vol 62, no 6, 1990, pg570
+   
+   Double_t sum(0);
+   
+   for (UInt_t k=0; k<=n; ++k) {
+      const Double_t a = (k<<1)+1;
+      const Double_t b = GenFactorial(m<<1,k) / GenFactorial((m<<1)+k+1,k+1);
+      const Double_t c = GramPolynomial(i, m, k, 0);
+      const Double_t d = GramPolynomial(t, m, k, s);
+      sum += a*b*c*d;
+   }
+   
+   return sum;
+   
 }
 
 #endif // SNS_TSnMath

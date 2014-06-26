@@ -170,11 +170,11 @@ void TSnCorrelateWvs::Process( )
 
             for( UChar_t p = 0; p < NSnConstants::kNsamps; p++ )
             {
-                if( fft->GetFreqData(p) > 0.17 ) 
+                if( fft->GetFrequency(p) > 0.17 ) 
                 {
-                    if( fft->GetFreqData(p) < 0.3 )
+                    if( fft->GetFrequency(p) < 0.3 )
                     {
-                        vsum[ch] += fft->GetFFTData( ch, p );
+                        vsum[ch] += fft->GetFFTMag( ch, p );
                     }
                     else
                     {
@@ -335,7 +335,7 @@ void TSnCorrelateWvs::Process( )
 		        "cc0: %f cc1: %f cc2: %f cc3: %f fft: %f\n",
 		        fHdr->GetUnixTime(), fMeta->GetRunNum(), fMeta->GetSeqNum(), 
 		        fHdr->GetEvtNum(), maxcc[0], maxcc[1], maxcc[2], maxcc[3],
-		        fft->GetFFTData(0, 0) );
+		        fft->GetFFTMag(0, 0) );
 	    }
     
         AddObjThisEvt( fCC );

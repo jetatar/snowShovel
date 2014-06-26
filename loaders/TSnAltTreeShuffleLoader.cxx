@@ -26,7 +26,14 @@ void TSnAltTreeShuffleLoader::MakeList() {
    for (Long64_t i=0, j=0; i<n; ++i) {
       const Long64_t e = GetEntryNumberFor(i);
       if (e>=0) {
-         fEntList.push_back(TSnMath::SafeCast<Long64_t, Entry_t>(e));
+         //fEntList.push_back(TSnMath::SafeCast<Long64_t, Entry_t>(e));
+         if (e>=kMaxUInt) {
+            throw std::runtime_error(
+               Form("<TSnAltTreeShuffleLoader::MakeList>: "
+                    "Cannot cast entry number [%lld] to type Entry_t "
+                    "(too large).",e));
+         }
+         fEntList.push_back(static_cast<Entry_t>(e));
          ++j;
          if (j==kMaxEntries) {
             throw std::runtime_error(

@@ -22,7 +22,7 @@
 TChain* nt, * dt;
 TFile* outf(0);
 TH1F* hdist;
-TH2F* hxy, * htp, * hfs, * hfm, * htc;
+TH2F* hxy, * htp, * hfs, * hfm, * htc, * hpc;
 TCanvas* cxy, * ctp;
 
 const Int_t rdbins=200,
@@ -107,6 +107,11 @@ void showXYfit(const Char_t* bfn,
                   fqbins, fqmin, fqmax,
                   thetabins, thetamin, thetamax);
    htc->SetDirectory(outf);
+
+   hpc = new TH2F("hpc","reco'd #phi vs fit quality;fit quality;#phi",
+                  fqbins, fqmin, fqmax,
+                  phibins, phimin, phimax);
+   hpc->SetDirectory(outf);
    
    Float_t theta, phi;
    const Long64_t nents = nt->GetEntries();
@@ -151,6 +156,7 @@ void showXYfit(const Char_t* bfn,
          htp->Fill(theta*TMath::RadToDeg(),
                    phi*TMath::RadToDeg());
          htc->Fill(chi2, theta*TMath::RadToDeg());
+         hpc->Fill(chi2, phi*TMath::RadToDeg());
          const Double_t dist = trajectory(theta, kFALSE);
          hdist->Fill(dist);
          hxy->Fill(dist*TMath::Cos(phi),
@@ -167,7 +173,11 @@ void showXYfit(const Char_t* bfn,
    cxy->GetPad(2)->SetGridx();
    cxy->GetPad(2)->SetGridy();
    cxy->cd(3);
+   cxy->GetPad(3)->Divide(2,1);
+   cxy->GetPad(3)->cd(1);
    htc->Draw("colz");
+   cxy->GetPad(3)->cd(2);
+   hpc->Draw("colz");
    cxy->cd(4);
    hdist->Draw();
    cxy->cd();

@@ -18,6 +18,7 @@ class TSnClockSetInfo : public TObject {
  public:
    TSnClockSetInfo() : fUSsinceSet(0), fAbsCache(0) {}
    TSnClockSetInfo(const TSnClockSetInfo& o) :
+      TObject(o),
       fPrevTime(o.fPrevTime),
       fSetTime(o.fSetTime),
       fCurrTime(o.fCurrTime),

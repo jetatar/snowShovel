@@ -61,7 +61,9 @@ TGraph* TSnCalWvData::NewGraphForChan(const UChar_t  ch,
    // samples, accordingly).
    // 
    // if doWrap is true (default), the waveform will be wrapped rather
-   // than directly translated
+   // than directly translated. NOTE that if the shift is not an
+   // integral number of samples, then the waveform will not be
+   // wrapped perfectly!
    //
    // the caller is responsible for deleting the graph
    
@@ -81,7 +83,7 @@ TGraph* TSnCalWvData::NewGraphForChan(const UChar_t  ch,
    Double_t* const ys = g->GetY();
    Double_t* const eys = (withErrors) ? ge->GetEY() : 0;
    const Double_t xmax = (vsTime)
-      ? NSnConstants::kNsamps / NSnConstants::kSampRate
+      ? static_cast<Float_t>(NSnConstants::kNsamps) / NSnConstants::kSampRate
       : NSnConstants::kNsamps;
    if (doWrap && (shift<0)) {
       // negative shift with wrapping is the same as a positive shift

@@ -52,8 +52,11 @@ TSnInterp1DSpline3::TSnInterp1DSpline3(const Char_t* name, const Char_t* title,
 
 TSnInterp1DSpline3::TSnInterp1DSpline3(const TSnInterp1DSpline3& s) :
    TSnInterp1DWvData(s),
-   fSpline(new TSpline3(*(s.fSpline))) {
+   fSpline(0) {
    // copy ctor
+   if (s.fSpline!=0) {
+      fSpline = new TSpline3(*s.fSpline);
+   }
 }
 
 TSnInterp1DSpline3::~TSnInterp1DSpline3() {
@@ -92,11 +95,18 @@ Double_t TSnInterp1DSpline3::Eval(const Double_t x) const {
 Double_t TSnInterp1DSpline3::FindXAtExtremum(const Bool_t min,
                                              Double_t* const ymax) const {
    AssertSpline("FindExtremum");
-   const Int_t n = fSpline->GetNp();
+   return FindXAtExtremum(*fSpline, min, ymax);
+}
+
+Double_t TSnInterp1DSpline3::FindXAtExtremum(TSpline& spl, const Bool_t min,
+                                             Double_t* const ymax) {
+   // static function usable by any interpolator with a TSpline
+   
+   const Int_t n = spl.GetNp();
    // no direct access to the knot points :(
    Double_t x,y, xm(0), ym(0);
    for (Int_t i=0; i<n; ++i) {
-      fSpline->GetKnot(i, x, y);
+      spl.GetKnot(i, x, y);
       if (i==0) {
          xm = x; ym = y;
       } else {

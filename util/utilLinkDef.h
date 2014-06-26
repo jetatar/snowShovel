@@ -97,6 +97,8 @@
 #pragma link C++ function TSnSpectral::Spread<Double_t>;
 #pragma link C++ function TSnSpectral::NewGraphFromRealFFT<Float_t>;
 #pragma link C++ function TSnSpectral::NewGraphFromRealFFT<Double_t>;
+#pragma link C++ function TSnSpectral::NewRealFFTGraph<Float_t>;
+#pragma link C++ function TSnSpectral::NewRealFFTGraph<Double_t>;
 #pragma link C++ function TSnSpectral::PearsonSmpCorrCoef<Float_t>;
 #pragma link C++ function TSnSpectral::PearsonSmpCorrCoef<Double_t>;
 #pragma link C++ function TSnSpectral::NewScanPrsCorrCoefGraph<Float_t>;

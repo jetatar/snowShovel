@@ -24,8 +24,8 @@ mailpass = util.getPassword('Password for {0}@{1} (to check SBD messages): '
 # how often to check the email account for unread messages
 mailCheckPeriod = 30 # seconds. if 0, don't repeat; just check once
 # how often to log back into the email account
-reconnectPeriod = -1 # seconds. if 0, don't repeat; just once
-                     #          if < 0, never intentionally logout
+reconnectPeriod = 1800 # seconds. if 0, don't repeat; just once
+                       #          if < 0, never intentionally logout
 # max time between reconnect attempts
 maxReconnDelay  = 1800 # seconds.
 
@@ -455,9 +455,10 @@ class AriSBDGmailImap4Client(imap4.IMAP4Client):
     @defer.inlineCallbacks
     def uponNextAuth(self):
         if ( (reconnectPeriod>0) and
-             ((self.factory.reactor.second() - self.connectedAt) 
+             ((self.factory.reactor.seconds() - self.connectedAt) 
               > reconnectPeriod) ):
             # time to re-connect
+            printout(vtype.kInfo, "reconnecting")
             if (self.loopy!=None):
                 # this will fire the deferred that loopy.start returned,
                 # causing repeatInboxSel to finish, leading to a logout.

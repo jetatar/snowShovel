@@ -30,6 +30,11 @@ namespace NSnChanCorl {
                                  const TSnInterp1DWvData& corl);
    
    extern
+   Double_t GetLLfromParallelChDTsForPlaneWv(const TArrayD& dts,
+                                             const TObjArray& corl,
+                                             const Float_t csig);
+
+   extern
    Double_t GetLLfromDTsForPlaneWv(const TArrayD& dts,
                                    const TObjArray& corl,
                                    const Float_t csig);

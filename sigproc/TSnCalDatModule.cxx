@@ -36,6 +36,8 @@ Bool_t TSnCalDatModule::IsTreeBranch(const Char_t* bname) {
    // this may be slow. explicitly check if this is a branch in the
    // current tree.
    // this won't work with any speical loaders for the branch
+   //
+   // this may not work if the tree isn't available early enough
    const TAMSelector* sel = GetSelector();
    if (sel!=0) {
       const TTree*    t   = sel->GetTree();
@@ -60,9 +62,9 @@ void TSnCalDatModule::ReqCalData(const Char_t* bname, TSnCalWvData*& address) {
       fNmToCalDat->Add(new TObjString(bname),
                        new TSnCalDatModule::AdrWrap_t(&address));
    } else {
-      SendError(kAbortModule, "ReqCalData",
-                "Cannot make multiple requests for the "
-                "same data [%s].", bname);
+      SendError(kWarning, "ReqCalData",
+                "Ignoring duplicate request for "
+                "data [%s].", bname);
    }
 }
 

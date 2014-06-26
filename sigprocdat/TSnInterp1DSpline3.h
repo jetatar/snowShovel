@@ -2,6 +2,7 @@
 #define SNS_TSnInterp1DSpline3
 
 class TGraph;
+class TSpline;
 class TSpline3;
 
 #include "TSnInterp1DWvData.h"
@@ -34,6 +35,10 @@ class TSnInterp1DSpline3 : public TSnInterp1DWvData {
       Swap(*this, o);
       return *this;
    }
+
+   static
+   Double_t FindXAtExtremum(TSpline& spl, const Bool_t min,
+                            Double_t* const ymax=0);
    
    virtual Double_t       FindXAtExtremum(const Bool_t min,
                                           Double_t* const ymax=0) const;

@@ -12,6 +12,8 @@ class TSnChanTimeCorlAltEvtsMod : public TSnCalDatModule {
       kWrapCorl,     // use TSnSpectral::NewCorrelateGraph
       kScanToEnvMax  // use TSnSpectral::NewScanPrsCorrCoefGraphUneq on start of waveform up to envelope max. requires stop shifted to end and envelope to be in event
    };
+
+   static const UInt_t kDebugCorls; // verbosity level at which to display debugging plots each event
    
  private:
    TString           fEvtBrA; // name of event branch A - no default

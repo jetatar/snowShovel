@@ -17,6 +17,8 @@ anaDH := \
 	TSnNumHighFFTBinsMod.h \
 	TSnPlotNumHighFFTBins.h \
 	TSnCountEventsMod.h \
+	TSnFindPeaksPastThreshMod.h \
+	TSnPlotWvfmPeaksMod.h \
 
 anaLIBEXTRA := \
 	`root-config --glibs` \

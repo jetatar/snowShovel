@@ -48,9 +48,10 @@ void TSnPlotNumHighFFTBins::Process( )
     LoadBranch( TSnRawTreeMaker::kEHdBrNm );
     LoadBranch( TSnRawTreeMaker::kEMtBrNm );
 
-    TSnCalFFTData* fft              = new TSnCalFFTData( "TSnCalFFTData", "", 
-                                                                    *fData );
-    TSnNumHighFFTBinsMod* nhFFTBins = new TSnNumHighFFTBinsMod( "highfft", fft );
+    TSnCalFFTData* fft              = 
+                            new TSnCalFFTData( "TSnCalFFTData", "", *fData );
+    TSnNumHighFFTBinsMod* nhFFTBins = 
+                            new TSnNumHighFFTBinsMod( "highfft", fft );
 
     nhFFTBins->Calculate( );
 

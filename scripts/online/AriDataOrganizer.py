@@ -35,6 +35,8 @@ appendChartPoints=True
 rateTimeWin=900
 # switch: length of time between checks for new data
 checkDataPeriod=900 # seconds
+# switch: time elapsed before a file is assumed finished (TODO: change)
+fileDoneTime=120 # seconds
 
 #setVerbosity(vtype.kInfo)
 setVerbosity(vtype.kDebug)
@@ -133,6 +135,23 @@ def doRawDataCheck():
                 printout(vtype.kDebug,"processing {0}".format(fn))
                 mac,run,seq = parseSnEvtsFilename(plainfn)
                 sdir = getSubDirFor(mac,run,seq)
+                # try to check if the file is done
+                filemodtime = os.path.getmtime(fn)
+                nowtime = getUnixTimeFrom(datetime.datetime.utcnow())
+                if (fileDoneTime > abs(nowtime - filemodtime)):
+                    printout(vtype.kWarn, "Skipping file [{0}]. "
+                             "file mod at {1}, current time {2}".format(
+                            fn, getDateStrFrom(
+                                datetime.datetime.utcfromtimestamp(filemodtime)),
+                            getDateStr()))
+                    continue
+                else:
+                    printout(vtype.kDebug, "File [{0}] time OK: "
+                             "file mod at {1}, current time {2}".format(
+                            fn, getDateStrFrom(
+                                datetime.datetime.utcfromtimestamp(filemodtime)),
+                            getDateStr()))
+                
                 # make runtree
                 tdir = "{0}/{1}".format(treeBaseDir,sdir)
                 checkDirExists(tdir)

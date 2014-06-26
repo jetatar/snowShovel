@@ -628,8 +628,8 @@ TGraph* TSnSpectral::NewScanPrsCorrCoefGraphUneq(const Num_t* const data1,
                                                  const UInt_t n1,
                                                  const Num_t* const data2,
                                                  const UInt_t n2) {
-   // shifts the data1 waveform between:
-   //   -n1/2 .. 0 .. n2-n1/2
+   // shifts data2 w.r.t. data1 between:
+   //   -n2/2 .. 0 .. n1-n2/2
    //
    // similar to NewScanPrsCorrCoefGraph, but never shifts into the window
    // and can scan unequal windows of the two waveforms
@@ -637,21 +637,28 @@ TGraph* TSnSpectral::NewScanPrsCorrCoefGraphUneq(const Num_t* const data1,
    TGraph* gr(0);
    const Num_t* end1  = data1+n1;
    const Num_t* end2  = data2+n2;
-   const Int_t  n1h   = n1>>1;    // n1/2
-   const Int_t  maxsh = n2-n1h;
-   gr = NewGraph(n2+1);
+   const Int_t  n2h   = n2>>1;    // n1/2
+   const Int_t  maxsh = n1-n2h;
+
+   gr = NewGraph(n2);
    Int_t i=0;
    const Num_t* d1, * d2;
-   for (Int_t sh=-n1h; sh<maxsh; ++sh, ++i) {
+   Bool_t isSet=kFALSE;
+   for (Int_t sh=-n2h; sh<maxsh; ++sh, ++i) {
+      isSet=kFALSE;
       d1 = data1;
       d2 = data2-sh;
       for (; (d1<end1) && (d2<end2); ++d1, ++d2) {
          if (d2>=data2) {
             SetPoint(gr, i, sh,
                      PearsonSmpCorrCoef(d1,d2,
-                                        TMath::Min(data1+n1-d1,data2+n2-d2)));
+                                        TMath::Min(end1-d1,end2-d2)));
+            isSet = kTRUE;
             break;
          }
+      }
+      if (isSet==kFALSE) {
+         SetPoint(gr, i, sh, 0);
       }
    }
    return gr;

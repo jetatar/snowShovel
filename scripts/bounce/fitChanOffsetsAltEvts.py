@@ -9,7 +9,8 @@ def getSplitSafeBrNm(s):
         
 
 def fitChanOffsetsAltEvts(ntn, dbn, infn1, infn2, outfn,
-                          minimizer, algo, filt, envnm):
+                          minimizer, algo, filt, envnm, altevt,
+                          shiftStop):
     
     nt = [ROOT.TChain(ntn), ROOT.TChain(ntn)]
     nt[0].Add(infn1)
@@ -37,7 +38,7 @@ def fitChanOffsetsAltEvts(ntn, dbn, infn1, infn2, outfn,
             alttag, bes[1].GetEvtWvfmBranchName().Data()))
     
     # add loader for the alternate run
-    altloader = ROOT.TSnAltTreeSingleEntryLoader(alttag, nt[1], 387)
+    altloader = ROOT.TSnAltTreeSingleEntryLoader(alttag, nt[1], altevt)
     #altloader = ROOT.TSnAltTreeRandomLoader(alttag, nt[1], 67392)
     #altloader = ROOT.TSnAltTreeCyclicLoader(alttag, nt[1])
     #altloader = ROOT.TSnAltTreeShuffleLoader(alttag, nt[1])
@@ -52,14 +53,20 @@ def fitChanOffsetsAltEvts(ntn, dbn, infn1, infn2, outfn,
     altstopnm = alttag + stopnm
     sfr[0].SetStopPosnName(stopnm)
     sfr[1].SetStopPosnName(altstopnm)
-    
+    # keep the stops the same in all channels
+    for ss in sfr:
+        ss.SetStopWidth(6)
+        ss.SetSearchWidth(6)
+        ss.SetMaxJitter(0)
     
     # shift data by stops
     # for the shifted branch name, don't use Shifted as a prefix, or
     # the module will think it's an alias for a branch that's in the tree.
     # appending Shifted will cause it to use FindObjThisEvt
-    shiftnm  = dbn.rstrip(".")
-    shiftnm += "Shifted."
+    shiftnm  = dbn
+    if (shiftStop):
+        shiftnm  = dbn.rstrip(".")
+        shiftnm += "Shifted."
     altshiftnm = alttag + shiftnm
     shd = [ ROOT.TSnShiftCalWvDataMod("ShiftDataByStops",
                                       dbn, shiftnm),
@@ -69,19 +76,41 @@ def fitChanOffsetsAltEvts(ntn, dbn, infn1, infn2, outfn,
     shd[1].SetStopPosnName(altstopnm)
     
     # filter out high frequencies
-    fltfcn = ROOT.TF1("fltfcn","gaus(0) + gaus(3)", -1.1, 1.1)
+    #fltfcn = ROOT.TF1("fltfcn","gaus(0) + gaus(3)", -1.1, 1.1)
+    #fltfcn.SetParameters(1.0, -0.3, 0.1, 1.0, 0.3, 0.1)
+    #
+    # butterworth filter
+    #   par0 = order of filter. bigger = faster cutoff.
+    #          positive = low pass, negative = high pass
+    #          cutoff slope = 20*par0 dB per decade of freq
+    #   par1 = cutoff frequency
+    #fltfcn = ROOT.TF1("fltfcn",
+    #                  "TMath::Sqrt(1.0/(1.0+TMath::Power(x/[1],2*[0])))",
+    #                  1e-5, 1.1)
+    #fltfcn.SetParameters(-4, 0.400); # high pass
+    #fltfcn.SetParameters(20, 0.180); # low pass
+    #fltfcn.SetParameters(20, 0.150); # low pass
+    #
+    # butterworth bandpass? (i just multiplied a HP and LP together)
+    fltfcn = ROOT.TF1("fltfcn",
+                      "TMath::Sqrt(1.0/(1.0+TMath::Power(x/[1],2*[0])))"
+                      "*TMath::Sqrt(1.0/(1.0+TMath::Power(x/[3],2*[2])))",
+                      1e-5, 1.1)
+    fltfcn.SetParameters(-10, 0.200, 4, 0.350);
+    
     fltfcn.SetNpx(1000)
-    fltfcn.SetParameters(1.0, -0.3, 0.1, 1.0, 0.3, 0.1)
     flt = [ ROOT.TSnFilterWaveformMod("FilterWaveformMod",
-                                      shiftnm,
-                                      "FilteredData.",
-                                      fltfcn),
-            ROOT.TSnFilterWaveformMod("{0}FilterWaveformMod".format(alttag),
-                                      altshiftnm,
-                                      "{0}FilteredData.".format(alttag),
-                                      fltfcn) ]
-
-    # data name (filtered or no)
+                                     shiftnm,
+                                     "FilteredData.",
+                                     fltfcn),
+           ROOT.TSnFilterWaveformMod("{0}FilterWaveformMod".format(alttag),
+                                     altshiftnm,
+                                     "{0}FilteredData.".format(alttag),
+                                     fltfcn) ]
+       
+    #flt[0].SetVerbosity(flt[0].kDebugFilter)
+    
+    #data name (filtered or no)
     cdnm = {}
     if (filt):
         cdnm[0] = flt[0].GetFltDatName().Data()
@@ -89,20 +118,52 @@ def fitChanOffsetsAltEvts(ntn, dbn, infn1, infn2, outfn,
     else:
         cdnm[0] = shiftnm
         cdnm[1] = altshiftnm
+    
 
+    fftnm = "{0}FFT".format(shiftnm)
+    altfftnm = "{0}FFT".format(altshiftnm)
+    fft = [ ROOT.TSnFFTCalcMod("CalcFFTMod", shiftnm, fftnm),
+            ROOT.TSnFFTCalcMod("CalcFFTMod", altshiftnm, altfftnm) ]
+    
+    # fltnm = "FilteredData."
+    # altfltnm = "{0}{1}".format(alttag,fltnm)
+    # specf = ROOT.TFile("/data/users/cjreed/work/BounceStudy/Stn10/nuTemplate/"
+    #                    "graphs.signalTemplates.root")
+    # spec = specf.Get("CalFFTData/cfft_E10_H10_c0.00")
+    # print spec
+    # flt = [ ROOT.TSnApplySpectrumMod("ApplySpecMod", fftnm, fltnm, spec),
+    #         ROOT.TSnApplySpectrumMod("ApplySpecMod", altfftnm, altfltnm, spec) ]
+    # flt[0].SetVerbosity(flt[0].kDebugSpec)
+    # flt[1].SetVerbosity(flt[1].kDebugSpec)
+    # cdnm = {}
+    # if (filt):
+    #     cdnm[0] = fltnm
+    #     cdnm[1] = altfltnm
+    # else:
+    #     cdnm[0] = shiftnm
+    #     cdnm[1] = altshiftnm
+    
+    
+    
     # find envelopes
     menv = {}
     if (envnm!=None):
         altenvnm = alttag + envnm
         menv[0] = ROOT.TSnFindWaveformEnvelopeMod("EnvMod",
                                                   cdnm[0], envnm)
+        #menv[0].SetVerbosity(menv[0].kDebugEnv)
         menv[1] = ROOT.TSnFindWaveformEnvelopeMod("{0}EnvMod".format(alttag),
                                                   cdnm[1], altenvnm)
-    
+        
+        
     # determine inter-channel correlations
     ctc = ROOT.TSnChanTimeCorlAltEvtsMod("ChanTimeCorlAltEvts",
                                          cdnm[0], cdnm[1])
-    
+    if (envnm!=None):
+        ctc.SetCorlType("ScanToEnvMax")
+        ctc.SetEnvelopeName(envnm)
+        ctc.SetAltEnvelopeName(altenvnm)
+    #ctc.SetVerbosity(ctc.kDebugCorls)
     
     # fit to find the best offsets between channels
     fco = ROOT.TSnFitChanOffsetAltEvtsMod(
@@ -114,7 +175,9 @@ def fitChanOffsetsAltEvts(ntn, dbn, infn1, infn2, outfn,
     if (envnm!=None):
         fco.SetEnvelopeName(menv[0].GetEnvDatName().Data())
         fco.SetAltEnvelopeName(menv[1].GetEnvDatName().Data())
-        fco.SetFitType("CorlAndEnvRiseDist")
+        #fco.SetFitType("CorlOnly")
+        #fco.SetFitType("CorlAndEnvRiseDist")
+        #fco.SetFitType("CorlAndEnvMatch")
         #fco.SetFitType("EnvRiseDistOnly")
     
     # save the results - put before process so hopefully it can be used to
@@ -139,11 +202,16 @@ def fitChanOffsetsAltEvts(ntn, dbn, infn1, infn2, outfn,
     bes[0].Add(bes[1])
     bes[1].Add(sfr[0])
     sfr[0].Add(sfr[1])
-    sfr[1].Add(shd[0])
-    shd[0].Add(shd[1])
+    if (shiftStop):
+        sfr[1].Add(shd[0])
+        shd[0].Add(shd[1])
+        shd[1].Add(fft[0])
+    else:
+        sfr[1].Add(fft[0])
+    fft[0].Add(fft[1])
     if (filt):
         print "using filter"
-        shd[1].Add(flt[0])
+        fft[1].Add(flt[0])
         flt[0].Add(flt[1])
         if (envnm!=None):
             flt[1].Add(menv[0])
@@ -154,11 +222,11 @@ def fitChanOffsetsAltEvts(ntn, dbn, infn1, infn2, outfn,
     else:
         print "no filter"
         if (envnm!=None):
-            shd[1].Add(menv[0])
+            fft[1].Add(menv[0])
             menv[0].Add(menv[1])
             menv[1].Add(ctc)
         else:
-            shd[1].Add(ctc)
+            fft[1].Add(ctc)
     ctc.Add(fco)
     fco.Add(scd)
     fco.Add(srr)
@@ -186,7 +254,7 @@ def fitChanOffsetsAltEvts(ntn, dbn, infn1, infn2, outfn,
 
 if __name__=="__main__":
     if (len(sys.argv)<5):
-        print "Usage: python fitChanOffsetsAltEvts.py [input filename 1 (w/ wildcards)] [input filename 2] [tree type] [output filename] (minimizer) (algorithm) (apply filter True/False) (use envelopes True/False)"
+        print "Usage: python fitChanOffsetsAltEvts.py [input filename 1 (w/ wildcards)] [input filename 2] [tree type] [output filename] (minimizer) (algorithm) (apply filter True/False) (use envelopes True/False) (alt entry number) (shift stop to end True/False)"
         print "   tree type = 0 for raw, 1 for FPN sub, 2 for calibrated amp out"
         sys.exit()
     
@@ -227,8 +295,17 @@ if __name__=="__main__":
         if (sys.argv[8]=='True'):
             envnm = "{0}Env".format(dbn)
     
+    altevt = 387
+    if (len(sys.argv)>=10):
+        altevt = int(sys.argv[9])
+    
+    shiftStop = True
+    if (len(sys.argv)>=11):
+        shiftStop = sys.argv[10]=='True'
+    
     fitChanOffsetsAltEvts(ntn, dbn, infn1, infn2, outfn, 
-                          minimizer, algo, filt, envnm)
+                          minimizer, algo, filt, envnm,
+                          altevt, shiftStop)
     
 
 

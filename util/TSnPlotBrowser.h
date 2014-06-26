@@ -147,7 +147,22 @@ public:
                             const UInt_t nplots,
                             const UInt_t xdivs=0,
                             const UInt_t ydivs=0);
-
+   
+   static
+   void        CalcCanvDivsP(UInt_t* cols,
+                             UInt_t* rows,
+                             const UInt_t nplots,
+                             const UInt_t xdivs=0,
+                             const UInt_t ydivs=0) {
+      // does nothing if either cols or rows is a null pointer
+      //
+      // this function is callable in pyroot using array.array('I',[0])
+      // for cols and rows
+      if ((cols!=0) && (rows!=0)) {
+         CalcCanvDivs(*cols, *rows, nplots, xdivs, ydivs);
+      }
+   }
+   
    
    ClassDef(TSnPlotBrowser,1) // class for easy browsing of sets of plots
 };

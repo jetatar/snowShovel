@@ -82,7 +82,10 @@ void TSnFilterWaveformMod::Process() {
                  "Double-click canvas to show next event.");
             TObjArray graphs; // to delete our graphs for us at the end
             graphs.SetOwner(kTRUE);
+            TCanvas* c = new TCanvas("cfilt", "cfilt - filter debug",
+                                     1200,1000);
             TSnPlotBrowser* pb = new TSnPlotBrowser("filtpb");
+            pb->SetCanvas(c);
             for (UChar_t ch=0; ch<NSnConstants::kNchans; ++ch) {
                // get the FFT
                TGraph* gwv = fDat->NewGraphForChan(ch, kTRUE);
@@ -125,11 +128,12 @@ void TSnFilterWaveformMod::Process() {
                delete[] fftfl;
             }
             
-            pb->AddPlotToSet("Filter", fFilter);
+            pb->AddPlotToSet("Filter", fFilter, 0, 0,
+               TSnPlotBrowser::kDefaults | TSnPlotBrowser::kGridx
+               | TSnPlotBrowser::kGridy);
             pb->DrawButtonBar();
             pb->DrawPlots("Waveforms");
             
-            TCanvas* c = pb->GetCanvas();
             TObject* o(0);
             while ( (o = c->WaitPrimitive())!=0 ) {
                gSystem->ProcessEvents();

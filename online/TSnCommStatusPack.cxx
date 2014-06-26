@@ -130,8 +130,8 @@ Bool_t TSnCommStatusPack::IsEqual(const TObject* obj) const {
          }
          if (ok && (fStatus!=0) && (s->fStatus!=0)) {
             ok &= (fStatus->GetMacAddress() == s->fStatus->GetMacAddress());
-            ok &= fStatus->GetConfLabelStr().EqualTo(
-               s->fStatus->GetConfLabelStr());
+            ok &= fStatus->GetConfLabelStr().CompareTo(
+               s->fStatus->GetConfLabelStr())==0;
             ok &= (fStatus->GetRunNum() == s->fStatus->GetRunNum());
             ok &= (fStatus->GetStatusTime().GetSec()
                    == s->fStatus->GetStatusTime().GetSec());

@@ -8,6 +8,9 @@ class TObjArray;
 #include "NSnConstants.h"
 
 class TSnFitChanOffsetMod : public TSnFittingModule {
+ public:
+   static const UInt_t kDebugCorlFit; // verbosity level at which to make plots
+
  private:
    TString fCorlNm; // name of input channel correlations (default: CrossChanCorls.)
    TString fDtsNm;  // name of output time offset object (default: ChanTimeOffsets.)

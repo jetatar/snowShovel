@@ -1,5 +1,0 @@
-Library.TSnRecoResult:                      librecodat.so
-Library.TSnRecoDirection:                   librecodat.so
-Library.TSnRecoChanOffsets:                 librecodat.so
-Library.TSnRecoSingleChanOffset:            librecodat.so
-Library.TSnRecoSingleChanOffsetSet:         librecodat.so

@@ -15,42 +15,43 @@ class TSnPlotAdcDists : public TAModule {
  private:
    TString       fPlotTag;       // a string to put in hist titles (i.e. describing the trigger or event selection)
    TString       fPlotLbl;       // a short label to add to the hist title (e.g. "Frc" for forced trigger)
+   TString       fDataBrNm;      // name of the data branch (default: TSnRawTreeMaker::kEWvBrNm)
    Int_t         fNtimeBins;     // number of bins along time axis
    Double_t      fTimeMin;       // minimum of time axis (unix time seconds)
    Double_t      fTimeMax;       // maximum of time axis (unix time seconds)
-   Int_t         fNRawAdcBins;   // number of bins along adc axis (def: 2048)
-   Float_t       fRawAdcMin;     // minimum of adc axis (def: -1)
-   Float_t       fRawAdcMax;     // maximum of adc axis (def: 4095)
-   Int_t         fNFpnSubBins;   // number of bins along fpn sub axis (def: 1001)
-   Float_t       fFpnSubMin;     // minimum of fpn sub axis (def: -1001)
-   Float_t       fFpnSubMax;     // maximum of fpn sub axis (def:  1001)
+   Int_t         fNAdcBins;      // number of bins along adc axis (def: 2048)
+   Float_t       fAdcMin;        // minimum of adc axis (def: -1)
+   Float_t       fAdcMax;        // maximum of adc axis (def: 4095)
    Int_t         fNFracBins;     // number of fraction bins (def: 100)
    Float_t       fFracMin;       // minimum of fraction axis (def: 0)
    Float_t       fFracMax;       // minimum of fraction axis (def: 1)
-   Bool_t        fDoFpnSubPlots; // whether to make FPN sub plots (def: true)
+   Bool_t        fDoFFTPlots;    // whether to make FFT plots (def: true, but not done for raw data)
    Float_t       fLowFreqCut;    // inclusive frequency defining the highest "low freq" bin (def: 200MHz)
    Bool_t        fNormTimeBins;  // whether to normalize time bins or not (def: true)
    Bool_t        fDoSmpPlots;    // whether to make plots for each sample (def: false; this takes a lot of RAM!)
+   Bool_t        fIsRaw;         // whether to read a TSnRawWaveform or a TSnCalWvData (def: true)
    
    // event objects
    TSnEventHeader* fHdr;         //! the event header
    TSnRawWaveform* fAdc;         //! the raw data
-   TSnCalWvData*   fFpn;         //! the FPN sub data
+   TSnCalWvData*   fFpn;         //! the Cal/FPN sub data
    
    // output plots
    TH1F*      fEvtsPerBin;       //! number of events in each time bin
-   TObjArray* fRawAdc;           //! [chan] raw dist 
-   TObjArray* fRawAdcVsT;        //! [chan] raw dist vs time 
-   TObjArray* fFpnSub;           //! [chan] fpnsub dist 
-   TObjArray* fFpnSubVsT;        //! [chan] fpnsub dist vs time 
-   TObjArray* fFpnSubFftVsT;     //! [chan] fpnsub FFT vs time 
-   TObjArray* fFpnSubMaxFrqVsT;  //! [chan] fpnsub max freq vs time 
-   TObjArray* fFpnSubLowPwrVsT;  //! [chan] fpnsub low power ratio vs time 
-   TObjArray* fRawAdcSmp;        //! [chan][samp] raw dist 
-   TObjArray* fRawAdcSmpVsT;     //! [chan][samp] raw dist vs time 
-   TObjArray* fFpnSubSmp;        //! [chan][samp] fpnsub dist 
-   TObjArray* fFpnSubSmpVsT;     //! [chan][samp] fpnsub dist vs time 
-
+   TObjArray* fhAdc;             //! [chan] amplitude dist 
+   TObjArray* fhAdcVsT;          //! [chan] amplitude dist vs time 
+   TObjArray* fhFftVsT;          //! [chan] FFT vs time 
+   TObjArray* fhMaxFrqVsT;       //! [chan] max freq vs time 
+   TObjArray* fhLowPwrVsT;       //! [chan] low power ratio vs time 
+   TObjArray* fhSmpVsT;          //! [chan][samp] sample dist vs time 
+   TObjArray* fhAmpl;            //! [chan] abs val of max sample in wvfm
+   TObjArray* fhAmplVsT;         //! [chan] abs val of max sample in wvfm vs time
+   TObjArray* fhMean;            //! [chan] mean of waveform
+   TObjArray* fhMeanVsT;         //! [chan] mean of waveform vs time
+   TObjArray* fhRms;             //! [chan] rms of waveform
+   TObjArray* fhRmsVsT;          //! [chan] rms of waveform vs time
+   
+   
    void NormalizeTimeColumns(TH2& h);
 
  protected:
@@ -63,73 +64,75 @@ class TSnPlotAdcDists : public TAModule {
    TSnPlotAdcDists(const Char_t* name,
                    const Int_t ntbins, 
                    const Double_t tmin, const Double_t tmax,
-                   const Char_t* plottag, const Char_t* plotlbl);
+                   const Char_t* plottag, const Char_t* plotlbl,
+                   const Char_t* dataBranchName=NULL);
    virtual ~TSnPlotAdcDists();
    
-   const Char_t* GetPlotTag() const     { return fPlotTag.Data(); }
-   const Char_t* GetPlotLbl() const     { return fPlotLbl.Data(); }
+   TString  GetPlotTag() const          { return fPlotTag.Data(); }
+   TString  GetPlotLbl() const          { return fPlotLbl.Data(); }
+   TString  GetDataBrName() const       { return fDataBrNm; }
    Int_t    GetNtimeBins() const        { return fNtimeBins; }
    Double_t GetTimeMin() const          { return fTimeMin; }
    Double_t GetTimeMax() const          { return fTimeMax; }
-   Int_t    GetNRawAdcBins() const      { return fNRawAdcBins; }
-   Float_t  GetRawAdcMin() const        { return fRawAdcMin; }
-   Float_t  GetRawAdcMax() const        { return fRawAdcMax; }
-   Int_t    GetNFpnSubBins() const      { return fNFpnSubBins; }
-   Float_t  GetFpnSubMin() const        { return fFpnSubMin; }
-   Float_t  GetFpnSubMax() const        { return fFpnSubMax; }
+   Int_t    GetNAdcBins() const         { return fNAdcBins; }
+   Float_t  GetAdcMin() const           { return fAdcMin; }
+   Float_t  GetAdcMax() const           { return fAdcMax; }
    Int_t    GetNFracBins() const        { return fNFracBins; }
    Float_t  GetFracMin() const          { return fFracMin; }
    Float_t  GetFracMax() const          { return fFracMax; }
    Float_t  GetLowFreqCut() const       { return fLowFreqCut; }
-   Bool_t   IsMakingFpnSubPlots() const { return fDoFpnSubPlots; }
+   Bool_t   IsMakingFFTPlots() const    { return fDoFFTPlots; }
    Bool_t   IsNormalizingTimeBins() const { return fNormTimeBins; }
    Bool_t   IsMakingSamplePlots() const { return fDoSmpPlots; }
+   Bool_t   IsDataBrRaw() const         { return fIsRaw; }
+   Bool_t   CanMakeFFTPlots() const    
+      { return fDoFFTPlots && (fIsRaw==kFALSE); }
    
    void     SetPlotTag(const Char_t* t)  { fPlotTag = t; }
    void     SetPlotLbl(const Char_t* l)  { fPlotLbl = l; }
+   void     SetDataBrName(const Char_t* n);
    void     SetNtimeBins(const Int_t nb) { fNtimeBins = nb; }
    void     SetTimeMin(const Double_t t) { fTimeMin = t; }
    void     SetTimeMax(const Double_t t) { fTimeMax = t; }
-   void     SetNRawAdcBins(const Int_t n) { fNRawAdcBins = n; }
-   void     SetRawAdcMin(const Int_t m) { fRawAdcMin = m; }
-   void     SetRawAdcMax(const Int_t m) { fRawAdcMax = m; }
-   void     SetNFpnSubBins(const Int_t n) { fNFpnSubBins = n; }
-   void     SetFpnSubMin(const Int_t m) { fFpnSubMin = m; }
-   void     SetFpnSubMax(const Int_t m) { fFpnSubMax = m; }
+   void     SetNAdcBins(const Int_t n) { fNAdcBins = n; }
+   void     SetAdcMin(const Int_t m) { fAdcMin = m; }
+   void     SetAdcMax(const Int_t m) { fAdcMax = m; }
    void     SetLowFreqCut(const Float_t c) { fLowFreqCut = c; }
-   void     SetMakeFpnSubPlots(const Bool_t m) { fDoFpnSubPlots = m; }
+   void     SetMakeFFTPlots(const Bool_t m) { fDoFFTPlots = m; }
    void     SetNormalizeTimeBins(const Bool_t n) { fNormTimeBins = n; }
    void     SetMakeSamplePlots(const Bool_t s) { fDoSmpPlots = s; }
+   void     SetIsDataBrRaw(const Bool_t r) { fIsRaw = r; }
    
    // the names of the plots are not settable (at least for now)
    static
    const Char_t* GetEvtsPerBinName() { return "hEvtsPerBin"; }
    static
-   const Char_t* GetRawAdc() { return "hRawAdc"; }
+   const Char_t* GetAdc() { return "hAdc"; }
    static
-   const Char_t* GetRawAdcVsT() { return "hRawAdcVsT"; }
+   const Char_t* GetAdcVsT() { return "hAdcVsT"; }
    static
-   const Char_t* GetFpnSub() { return "hFpnSub"; }
+   const Char_t* GetFftVsT() { return "hFftVsT"; }
    static
-   const Char_t* GetFpnSubVsT() { return "hFpnSubVsT"; }
+   const Char_t* GetMaxFrqVsT() { return "hMaxFrqVsT"; }
    static
-   const Char_t* GetFpnSubFftVsT() { return "hFpnSubFftVsT"; }
+   const Char_t* GetLowPwrVsT() { return "hLowPwrVsT"; }
    static
-   const Char_t* GetFpnSubMaxFrqVsT() { return "hFpnSubMaxFrqVsT"; }
+   const Char_t* GetSmpVsT() { return "hSmpVsT"; }
    static
-   const Char_t* GetFpnSubLowPwrVsT() { return "hFpnSubLowPwrVsT"; }
+   const Char_t* GetAmpl() { return "hAmpl"; }
    static
-   const Char_t* GetRawAdcSmp() { return "hRawAdcSmp"; }
+   const Char_t* GetAmplVsT() { return "hAmplVsT"; }
    static
-   const Char_t* GetRawAdcSmpVsT() { return "hRawAdcSmpVsT"; }
+   const Char_t* GetMean() { return "hMean"; }
    static
-   const Char_t* GetFpnSubSmp() { return "hFpnSubSmp"; }
+   const Char_t* GetMeanVsT() { return "hMeanVsT"; }
    static
-   const Char_t* GetFpnSubSmpVsT() { return "hFpnSubSmpVsT"; }
+   const Char_t* GetRms() { return "hRms"; }
+   static
+   const Char_t* GetRmsVsT() { return "hRmsVsT"; }
    
    
-   
-   ClassDef(TSnPlotAdcDists, 1); // make diagnostic ADC distributions
+   ClassDef(TSnPlotAdcDists, 2); // make diagnostic ADC distributions
 };
 
 #endif // SNS_TSnPlotAdcDists

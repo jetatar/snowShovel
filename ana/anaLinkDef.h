@@ -30,6 +30,9 @@
 #pragma link C++ class TSnNumHighFFTBinsMod+;
 #pragma link C++ class TSnPlotNumHighFFTBins+;
 #pragma link C++ class TSnCountEventsMod+;
+#pragma link C++ class TSnFindPeaksPastThreshMod+;
+#pragma link C++ class TSnPlotWvfmPeaksMod+;
+
 
 #pragma link C++ class std::pair<UInt_t, UInt_t>;
 #pragma link C++ class std::vector< std::pair<UInt_t, UInt_t> >;

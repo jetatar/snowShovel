@@ -29,6 +29,9 @@ class TSnCalDatModule : public TAModule {
    virtual void ReqCalData(const Char_t* bname, TSnCalWvData*& address);
    virtual void LoadCalData(const Char_t* bname);
 
+   Bool_t  IsAlwaysTree(const Char_t* ) { return kTRUE; }
+   Bool_t  IsNeverTree(const Char_t* ) { return kFALSE; }
+
  public:
    virtual ~TSnCalDatModule();
 
@@ -39,6 +42,10 @@ class TSnCalDatModule : public TAModule {
       { fIsBr = &TSnCalDatModule::IsFpnSubOrAmpOutBr; }
    void    SetUseIsTreeBranch()
       { fIsBr = &TSnCalDatModule::IsTreeBranch; }
+   void    SetAssumeAlwaysTree()
+      { fIsBr = &TSnCalDatModule::IsAlwaysTree; }
+   void    SetAssumeNeverTree()
+      { fIsBr = &TSnCalDatModule::IsNeverTree; }
    
    ClassDef(TSnCalDatModule, 1); // base class for modules wanting to load calibrated (fpn sub, gain cal or processed data)
 };

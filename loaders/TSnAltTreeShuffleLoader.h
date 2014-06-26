@@ -22,6 +22,8 @@ class TSnAltTreeShuffleLoader : public TSnAltTreeLoader {
 ////////////////////////////////////////////////////////////////////////////////
 
  public:
+   // if type of Entry_t changes,
+   // maybe update error check in TSnAltTreeShuffleLoader::MakeList
    typedef      UInt_t   Entry_t;
    static const Long64_t kMaxEntries; // max number of entries possible
 

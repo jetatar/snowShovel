@@ -32,7 +32,8 @@ TSnAngleFromSingleChanOffsets::TSnAngleFromSingleChanOffsets(
                                                    const Char_t* name,
                                                    const Char_t* miniName,
                                                    const Char_t* algoName) :
-   TSnFittingModule(name, "reco angle from single chan offsets"),
+   TSnFittingModule(name, "reco angle from single chan offsets",
+                    miniName, algoName),
    fChDtsNm("SingleChanTimeOffsets."),
    fChOffsNm("ChanTimeOffsets"),
    fGeoNm("AriannaGeo"),

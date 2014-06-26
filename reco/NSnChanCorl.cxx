@@ -47,6 +47,71 @@ Double_t NSnChanCorl::GetProbForDTFromCorl(Double_t dt,
    return c;
 }
 
+
+Double_t NSnChanCorl::GetLLfromParallelChDTsForPlaneWv(const TArrayD& dts,
+                                                       const TObjArray& corl,
+                                                       const Float_t csig) {
+   // this function ONLY uses two delta-t numbers: the parallel chans
+   // dt(2,0) and dt(3,1). therefore this only works for 4 channel detectors
+   //
+   // calculate the negative log likelihood that the time offests
+   // specified in dts came from a plane wave given the correlation
+   // probablity functions specified in corl.
+   //
+   // expect arrays to be indexed like in TSnRecoChanOffsets
+   // corl should contain TSnInterp1DWvData objects
+   // csig is the gaussian sigma used to constrain the plane wave
+   //  (same units as dts)
+   //
+   // the 'dts' array should be the time differences due to a plane
+   // wave (i.e. the result of GetPlaneWaveOffsets)
+   //
+   // expect dts and corl to have units of time (NOT samples!)
+   
+   Double_t c, dt, tc(1.0);
+   if (NSnConstants::kNchans==4) {
+   
+      const TSnInterp1DWvData* cr;
+      for (UChar_t ch=0; ch<NSnConstants::kNchans; ++ch) {
+         for (UChar_t xc=0; xc<ch; ++xc) {
+            if ( (ch==2 && xc==0) || (ch==3 && xc==1) ) {
+               const UInt_t di = TSnRecoChanOffsets::IndexFor(ch,xc);
+               dt = dts[di];
+               cr  = dynamic_cast<const TSnInterp1DWvData*>(corl.At(di));
+               if (cr!=0) {
+                  c = GetProbForDTFromCorl(dt, *cr);
+                  if (isnan(c)) {
+                     ::Error("GetLLfromParallelChDTsForPlaneWv",
+                             "NAN at ch=%hhu, xc=%hhu, dt=%g, corl=%g",
+                             ch, xc, dt, cr->Eval(dt));
+                  }
+                  tc *= c;
+               } else {
+                  throw std::runtime_error(
+                     Form("<NSnChanCorl::GetLLfromParallelChDTsForPlaneWv>: "
+                          "Could not get TSnInterp1DWvData object for "
+                          "ch=%hhu, xc=%hhu.",
+                          ch, xc));
+               }
+            }
+         }
+      }
+   } else {
+      throw std::runtime_error(Form(
+         "<NSnChanCorl::GetLLfromParallelChDTsForPlaneWv>: "
+         "Only works for a 4 channel detector, not %hhu!",
+         NSnConstants::kNchans));
+   }
+
+   if (tc>kEpsilon) {
+      return ( -TMath::Log(tc) );
+   } else {
+      // prevent NaN's -- increase the log lik linearly for probabilities
+      // smaller than epsilon
+      return ( -TMath::Log(kEpsilon) / TMath::Abs(kEpsilon-tc) );
+   }
+}
+
 Double_t NSnChanCorl::GetLLfromDTsForPlaneWv(const TArrayD& dts,
                                              const TObjArray& corl,
                                              const Float_t csig) {
@@ -58,6 +123,9 @@ Double_t NSnChanCorl::GetLLfromDTsForPlaneWv(const TArrayD& dts,
    // corl should contain TSnInterp1DWvData objects
    // csig is the gaussian sigma used to constrain the plane wave
    //  (same units as dts)
+   //
+   // the 'dts' array should be the time differences due to a plane
+   // wave (i.e. the result of GetPlaneWaveOffsets)
    //
    // expect dts and corl to have units of time (NOT samples!)
    
