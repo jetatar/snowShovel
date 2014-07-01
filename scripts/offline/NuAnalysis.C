@@ -35,13 +35,13 @@ TChain* nt( 0 );
 TFile*  fout;
 
 // Station number
-const Char_t* stnNum    = "3";
+const Char_t* stnNum    = "10";
 
 // Input file
 const Char_t* infl      = Form("/w2/jtatar/Analysis/Stn%s/CalTree.CombNoHtbt.RawTree.Stn%sEvts.root", stnNum, stnNum);
 
 // Output file
-const Char_t* outfn     = Form("/w2/jtatar/Analysis/Stn%s/pl.stn%s.root", stnNum, stnNum);
+const Char_t* outfn     = Form("/w2/jtatar/Analysis/Stn%s/pl.stn%s_ampcalib.root", stnNum, stnNum);
 
 
 void NuAnalysis( void )
@@ -62,6 +62,7 @@ void NuAnalysis( void )
     // Select THERMAL events
     TSnBasicEvtSelMod*  bes = new TSnBasicEvtSelMod( "BES" );
     bes->GetTrgBits().EnableTrig( TSnTrgInfo::kThermal );
+    //bes->GetTrgBits().EnableTrig( TSnTrgInfo::kForced );
     bes->SetCheckCRC( kTRUE );
 
     // Remove events with a sharply peaked FFT distribution.

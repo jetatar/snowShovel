@@ -23,7 +23,8 @@ TSnPlotNumHighFFTBins::TSnPlotNumHighFFTBins( const Char_t* name ) :
 
 void TSnPlotNumHighFFTBins::SlaveBegin( )
 {
-    ReqBranch( TSnSaveCalibDataMod::kFPNSubDatBrNm, fData );
+//    ReqBranch( TSnSaveCalibDataMod::kFPNSubDatBrNm, fData );
+    ReqBranch( TSnSaveCalibDataMod::kAmpOutDatBrNm, fData );
     ReqBranch( TSnRawTreeMaker::kEHdBrNm, fHdr );
     ReqBranch( TSnRawTreeMaker::kEMtBrNm, fMeta );
 
@@ -32,7 +33,8 @@ void TSnPlotNumHighFFTBins::SlaveBegin( )
     
     for( UChar_t ch = 0; ch < NSnConstants::kNchans; ch++ )
     {
-        TH1F* hhigh = new TH1F( Form("hNHighPks%d", ch), "", 61, -0.5, 60.5 );
+        TH1F* hhigh = new TH1F( Form("hNHighPks%d", ch), "", TSnCalFFTData::kFftPts + 1, -0.5, TSnCalFFTData::kFftPts + 0.5 );
+//        TH1F* hhigh = new TH1F( Form("hNHighPks%d", ch), "", 61, -0.5, 60.5 );
 
         hNHighPks->AddAt( hhigh, ch );
     }
@@ -44,7 +46,8 @@ void TSnPlotNumHighFFTBins::SlaveBegin( )
 
 void TSnPlotNumHighFFTBins::Process( )
 {
-    LoadBranch( TSnSaveCalibDataMod::kFPNSubDatBrNm );
+//    LoadBranch( TSnSaveCalibDataMod::kFPNSubDatBrNm );
+    LoadBranch( TSnSaveCalibDataMod::kAmpOutDatBrNm );
     LoadBranch( TSnRawTreeMaker::kEHdBrNm );
     LoadBranch( TSnRawTreeMaker::kEMtBrNm );
 
