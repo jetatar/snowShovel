@@ -12,17 +12,18 @@
 #include "TH1F.h" 
 
 
-static const Char_t* stnNum     = "3";
+static const Char_t* stnNum     = "10";
+static const UChar_t kNchans    = 4;
 
-static const Char_t* infpnflnm      = 
-    Form("/w2/jtatar/Analysis/Stn%s/pl.stn%s_minbias.root", stnNum, stnNum); 
-static const Char_t* inampflnm     = 
-    Form("/w2/jtatar/Analysis/Stn%s/pl.stn%s_ampcalib_minbias.root", stnNum, stnNum); 
+static const Char_t* infpnflnm  = 
+    Form("/w1/jtatar/Analysis/Stn%s/pl.stn%s.root", 
+                                                            stnNum, stnNum); 
+static const Char_t* inampflnm  = 
+    Form("/w1/jtatar/Analysis/Stn%s/pl.stn%s_ampcalib.root", 
+                                                            stnNum, stnNum); 
 
-TString outdir    = 
-    Form("/data/users/jtatar/PaperPlots/Stn%s/", stnNum);
+TString outdir    = Form("/data/users/jtatar/PaperPlots/Stn%s/", stnNum);
 
-static const UChar_t kNchans = 4;
 
 void pplNhm_FPNvsAmp( void )
 {
@@ -53,8 +54,8 @@ void pplNhm_FPNvsAmp( void )
 
         leg[ch] = new TLegend( 0.6, 0.75, 0.95, 0.95 );
 
-        leg[ch]->AddEntry( hfpn[ch], Form("Ch%d MinB FPN", ch), "l" );
-        leg[ch]->AddEntry( hamp[ch], Form("Ch%d MinB Amp", ch), "l" );
+        leg[ch]->AddEntry( hfpn[ch], Form("Ch%d Thm FPN", ch), "l" );
+        leg[ch]->AddEntry( hamp[ch], Form("Ch%d Thm Amp", ch), "l" );
 
         leg[ch]->SetBorderSize( 1 );
         leg[ch]->SetFillColor( 0 );
@@ -71,22 +72,20 @@ void pplNhm_FPNvsAmp( void )
         
         c2[ch]->cd( );
         gPad->SetLogy( 1 );
-        hamp[ch]->Draw( );
-        hfpn[ch]->Draw( "SAME" );
+        hfpn[ch]->Draw( );
+        hamp[ch]->Draw( "SAME" );
         leg[ch]->Draw( );
 
-        hamp[ch]->SetTitle( ";N_{HM};Normalized Num. Events" );
+        hfpn[ch]->SetTitle( ";N_{HM};Normalized Num. Events" );
         hfpn[ch]->SetLineStyle( 1 );
-//        hfpn[ch]->SetLineColor( 1 );
         hfpn[ch]->GetXaxis()->SetRangeUser( -0.5, 25.5 );
 
         hamp[ch]->SetLineStyle( 2 );
-//        hamp[ch]->SetLineColor( 2 );
         hamp[ch]->GetXaxis()->SetRangeUser( -0.5, 25.5 );
 
-        c[ch]->Print( Form("%sch%d.Minbias_Zoom_NhmNoCuts_FpnVsAmp.pdf", 
+        c[ch]->Print( Form("%sch%d.Thm_Zoom_NhmNoCuts_FpnVsAmp.pdf", 
                                                         outdir.Data(), ch) );
-        c2[ch]->Print( Form("%sch%d.Minbias_Log_Zoom_NhmNoCuts_FpnVsAmp.pdf", 
+        c2[ch]->Print( Form("%sch%d.Thm_Log_Zoom_NhmNoCuts_FpnVsAmp.pdf", 
                                                         outdir.Data(), ch) );
     }
 } 

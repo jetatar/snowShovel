@@ -8,17 +8,17 @@
 #include "TH1F.h" 
 
 
-static const Char_t* stnNum     = "3";
+static const Char_t* stnNum     = "11";
 
 static const Char_t* inthmflnm      = 
-    Form("/w2/jtatar/Analysis/Stn%s/pl.stn%s.root", stnNum, stnNum); 
+    Form("/w1/jtatar/Analysis/Stn%s/pl.stn%s.root", stnNum, stnNum); 
 static const Char_t* inminbflnm     = 
-    Form("/w2/jtatar/Analysis/Stn%s/pl.stn%s_minbias.root", stnNum, stnNum); 
+    Form("/w1/jtatar/Analysis/Stn%s/pl.stn%s_minbias.root", stnNum, stnNum); 
 
 TString outdir    = 
     Form("/data/users/jtatar/PaperPlots/Stn%s/", stnNum);
 
-static const UChar_t kNchans = 4;
+static const UChar_t kNchans = 3;
 
 void pplNhm_ThmVsMinb( void )
 {
@@ -67,51 +67,20 @@ void pplNhm_ThmVsMinb( void )
         
         c2[ch]->cd( );
         gPad->SetLogy( 1 );
-        hminb[ch]->Draw( );
-        hthm[ch]->Draw( "SAME" );
+        hthm[ch]->Draw( );
+        hminb[ch]->Draw( "SAME" );
         leg[ch]->Draw( );
 
-        hminb[ch]->SetTitle( ";N_{HM};Normalized Num. Events" );
+        hthm[ch]->SetTitle( ";N_{HM};Normalized Num. Events" );
         hthm[ch]->SetLineStyle( 1 );
-//        hthm[ch]->SetLineColor( 1 );
         hthm[ch]->GetXaxis()->SetRangeUser( -0.5, 25.5 );
 
         hminb[ch]->SetLineStyle( 2 );
-//        hminb[ch]->SetLineColor( 2 );
         hminb[ch]->GetXaxis()->SetRangeUser( -0.5, 25.5 );
 
-        c[ch]->Print( Form("%sch%d.Minbias_Zoom_NhmNoCuts_ThmVsMinb.pdf", 
+        c[ch]->Print( Form("%sch%d.Zoom_NhmNoCuts_ThmVsMinb.pdf", 
                                                         outdir.Data(), ch) );
-        c2[ch]->Print( Form("%sch%d.Minbias_Log_Zoom_NhmNoCuts_ThmVsMinb.pdf", 
+        c2[ch]->Print( Form("%sch%d.Log_Zoom_NhmNoCuts_ThmVsMinb.pdf", 
                                                         outdir.Data(), ch) );
     }
-
-    
-
-/*
-    TCanvas* c = new TCanvas( "c", "", cwid, chit );    
-    c->cd( );
-    gPad->SetLogy( 1 );
-
-    hthm[0]->SetTitle( ";N_{HM}" );
-
-    hthm[0]->Draw( );
-    hthm[1]->Draw( "SAME" );
-    hthm[2]->Draw( "SAME" );
-    hthm[3]->Draw( "SAME" );
-
-    leg->Draw( );
-
-    TCanvas* c2 = new TCanvas( "c2", "", cwid, chit );
-    c2->cd( );
-
-    hthm[2]->SetTitle( ";N_{HM}" );
-
-    hthm[2]->Draw( );
-    hthm[1]->Draw( "SAME" );
-    hthm[0]->Draw( "SAME" );
-    hthm[3]->Draw( "SAME" );
-
-    leg->Draw( );
-*/
 } 

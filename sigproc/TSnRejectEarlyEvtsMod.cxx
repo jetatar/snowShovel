@@ -5,12 +5,33 @@
 #include "TSnClockSetInfo.h"
 #include "TSnRawTreeMaker.h"
 #include "TSnEventHeader.h"
+#include "TSnEventMetadata.h"
+#include "TSnRunInfo.h"
 
 ClassImp(TSnRejectEarlyEvtsMod);
 
 void TSnRejectEarlyEvtsMod::SlaveBegin() {
    ReqBranch(TSnRawTreeMaker::kCSrBrNm, fStart);
    ReqBranch(TSnRawTreeMaker::kEHdBrNm, fHdr);
+   if ( IsRejectingOnlyFirstEvent() ) {
+      ReqBranch(TSnRawTreeMaker::kCMtBrNm, fConfMeta);
+      ReqBranch(TSnRawTreeMaker::kRunBrNm, fRunInfo);
+   }
+}
+
+Bool_t TSnRejectEarlyEvtsMod::IsFirstEvtOfSeq() const {
+   // check whether the current event is the first of the sequence
+   //
+   // this exploits the fact that the (current) MBED code sets
+   // the first event number to (seq num * evts per file)
+   // see ResetCountersClearEvt() in main.cpp of the MBED code.
+   //
+   // NOTE: if the MBED code changes, this function will become invalid!
+   
+   const UInt_t estart = fConfMeta->GetSeqNum() *
+      fRunInfo->GetEvtsPerSeq();
+   return (fHdr->GetEvtNum() == estart);
+
 }
 
 void TSnRejectEarlyEvtsMod::Process() {
@@ -23,7 +44,21 @@ void TSnRejectEarlyEvtsMod::Process() {
          TTimeStamp abstime = TSnClockSetInfo::CalcAbsTime( *fStart, *fHdr );
          const TTimeStamp& starttm = fStart->CalcAbsCurrTime();
          if ( (abstime.AsDouble() - starttm.AsDouble()) < fEarlyTime ) {
-            SkipEvent();
+            if ( IsRejectingOnlyFirstEvent() ) {
+               LoadBranch(TSnRawTreeMaker::kRunBrNm);
+               LoadBranch(TSnRawTreeMaker::kCMtBrNm);
+               if ((fRunInfo!=0) && (fConfMeta!=0)) {
+                  if ( IsFirstEvtOfSeq() ) {
+                     SkipEvent();
+                  }
+               } else {
+                  SendError(kAbortAnalysis, "Process",
+                            "Could not get run/config info for this sequence! "
+                            "Was TSnConfigTreeLoader added to the selector?");
+               }
+            } else {
+               SkipEvent();
+            }
          }
          
       } else {

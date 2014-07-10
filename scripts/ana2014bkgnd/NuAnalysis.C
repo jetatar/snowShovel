@@ -28,20 +28,24 @@
 
 #endif
 
-#include "loadtree.C" 
+#include "/data/users/jtatar/Work/snowShovel/scripts/offline/loadtree.C" 
 
 
 TChain* nt( 0 );
 TFile*  fout;
 
 // Station number
-const Char_t* stnNum    = "10";
+const Char_t* stnNum    = "3";
 
 // Input file
-const Char_t* infl      = Form("/w2/jtatar/Analysis/Stn%s/CalTree.CombNoHtbt.RawTree.Stn%sEvts.root", stnNum, stnNum);
+const Char_t* infl      = 
+    Form("/w1/jtatar/Analysis/Stn%s/CalTree.CombNoHtbt.RawTree.Stn%sEvts.root", 
+                                                            stnNum, stnNum);
 
 // Output file
-const Char_t* outfn     = Form("/w2/jtatar/Analysis/Stn%s/pl.stn%s_ampcalib.root", stnNum, stnNum);
+const Char_t* outfn     = 
+    Form("/w1/jtatar/Analysis/Stn%s/pl.stn%s_ampcalib_minbias.root", 
+                                                            stnNum, stnNum);
 
 
 void NuAnalysis( void )
@@ -61,8 +65,8 @@ void NuAnalysis( void )
 
     // Select THERMAL events
     TSnBasicEvtSelMod*  bes = new TSnBasicEvtSelMod( "BES" );
-    bes->GetTrgBits().EnableTrig( TSnTrgInfo::kThermal );
-    //bes->GetTrgBits().EnableTrig( TSnTrgInfo::kForced );
+    //bes->GetTrgBits().EnableTrig( TSnTrgInfo::kThermal );
+    bes->GetTrgBits().EnableTrig( TSnTrgInfo::kForced );
     bes->SetCheckCRC( kTRUE );
 
     // Remove events with a sharply peaked FFT distribution.
