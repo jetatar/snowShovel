@@ -1,7 +1,10 @@
-*.[oad]
+*.o
+*.a
+*.d
 *.so
 *.swp
 *.par
+*.pdf
 *G__*
 *.rootmap
 *.svn-base

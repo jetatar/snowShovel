@@ -17,6 +17,8 @@
 
 #endif
 
+#include "/data/users/jtatar/Work/snowShovel/scripts/offline/loadtree.C"
+
 TChain* nt( 0 );
 TFile* fout;
 
@@ -24,7 +26,16 @@ void PruneBadEvents( const Char_t* infn, const Char_t* outfn )
 {
     delete nt;
 
-    nt = new TChain( TSnSaveCalibDataMod::kFpnEvtTreeNm );
+    const Bool_t bOk = tryLoadDataTree( infn, nt );
+    
+    if( !bOk )
+    {
+        Printf( "! Could not load data from: %s.\n", infn );
+
+        return;        
+    }
+
+    nt = new TChain( TSnSaveCalibDataMod::kCalEvtTreeNm );
     nt->Add( infn );
 
     TAMSelector* sel = new TAMSelector;

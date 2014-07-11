@@ -46,6 +46,7 @@
 #pragma link C++ class TSnSmoothDataLstSqrCnvMod+;
 #pragma link C++ class TSnTreeBuilderMod+;
 #pragma link C++ class TSnWaveletDenoiseMod+;
+#pragma link C++ class TSnPruneBadEvtsMod+;
 
 // define some common branches so that these will work in CINT or pyroot
 #pragma link C++ function TSnTreeBuilderMod::CopyBranchFromTree<TSnEventMetadata>;

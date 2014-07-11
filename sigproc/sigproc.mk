@@ -37,6 +37,7 @@ sigprocDH := \
 	TSnSmoothDataLstSqrCnvMod.h \
 	TSnTreeBuilderMod.h \
 	TSnWaveletDenoiseMod.h \
+	TSnPruneBadEvtsMod.h \
 
 sigprocLIBEXTRA := \
 	`root-config --glibs` \
