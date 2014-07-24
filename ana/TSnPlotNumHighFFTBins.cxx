@@ -14,8 +14,8 @@ ClassImp( TSnNumHighFFTBinsMod );
 
 
 TSnPlotNumHighFFTBins::TSnPlotNumHighFFTBins( const Char_t* name ) :
-    TAModule(name, "TSnPlotNumHighFFTBins" ), fData(0), fHdr(0), fMeta(0),
-    hNHighPks(0), hNHighPksAllCh(0)//, hNChWithHighPks(0)
+    TAModule(name, "TSnPlotNumHighFFTBins" ), fData(0), hNHighPks(0), 
+    hNHighPksAllCh(0)//, hNChWithHighPks(0)
 {
     hNHighPks   = new TObjArray( NSnConstants::kNchans );
 }
@@ -25,8 +25,6 @@ void TSnPlotNumHighFFTBins::SlaveBegin( )
 {
 //    ReqBranch( TSnSaveCalibDataMod::kFPNSubDatBrNm, fData );
     ReqBranch( TSnSaveCalibDataMod::kAmpOutDatBrNm, fData );
-    ReqBranch( TSnRawTreeMaker::kEHdBrNm, fHdr );
-    ReqBranch( TSnRawTreeMaker::kEMtBrNm, fMeta );
 
     hNHighPksAllCh  = new TH1F( "hNHighPksAllCh", "", 61, -0.5, 60.5 );
 //    hNChWithHighPks = new TH1F( "hNChWithHighPks", "", 5, -0.5, 4.5 ); 
@@ -39,6 +37,9 @@ void TSnPlotNumHighFFTBins::SlaveBegin( )
         hNHighPks->AddAt( hhigh, ch );
     }
 
+    hNHighPksAllCh->SetName( "hNHighPksAllCh" );
+    hNHighPks->SetName( "hNHighPks" );
+
     AddOutput( hNHighPks );
     AddOutput( hNHighPksAllCh );
 }
@@ -48,8 +49,6 @@ void TSnPlotNumHighFFTBins::Process( )
 {
 //    LoadBranch( TSnSaveCalibDataMod::kFPNSubDatBrNm );
     LoadBranch( TSnSaveCalibDataMod::kAmpOutDatBrNm );
-    LoadBranch( TSnRawTreeMaker::kEHdBrNm );
-    LoadBranch( TSnRawTreeMaker::kEMtBrNm );
 
     TSnCalFFTData* fft              = 
                             new TSnCalFFTData( "TSnCalFFTData", "", *fData );
@@ -61,6 +60,7 @@ void TSnPlotNumHighFFTBins::Process( )
     UInt_t nHighBins[NSnConstants::kNchans];
     UChar_t totHighBins = 0;
 
+    //for( UChar_t ch = 0; ch < 1; ch++ )
     for( UChar_t ch = 0; ch < NSnConstants::kNchans; ch++ )
     {
         nHighBins[ch] = nhFFTBins->GetNumHighBins( ch );

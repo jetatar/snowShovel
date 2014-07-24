@@ -24,7 +24,7 @@ TSnSelEvtsOnCC::TSnSelEvtsOnCC( const Char_t* name,
 
 void TSnSelEvtsOnCC::SlaveBegin( )
 {
-    ReqBranch( TSnSaveCalibDataMod::kFPNSubDatBrNm, fData );
+    ReqBranch( TSnSaveCalibDataMod::kAmpOutDatBrNm, fData );
     ReqBranch( TSnRawTreeMaker::kEHdBrNm, fHdr );
     ReqBranch( TSnRawTreeMaker::kEMtBrNm, fMeta );
 
@@ -51,6 +51,12 @@ void TSnSelEvtsOnCC::SlaveBegin( )
         hCCbyCh->AddAt( hccbych, ch );
     }
 
+    hCC->SetName( "hCC" );
+    hCCvT->SetName( "hCCvT" );
+    hLrgCCvT->SetName( "hLrgCCvT" );
+    hCCbyCh->SetName( "hCCbyCh" );
+
+
     AddOutput( hCC );
     AddOutput( hCCvT );
     AddOutput( hLrgCCvT );
@@ -60,7 +66,7 @@ void TSnSelEvtsOnCC::SlaveBegin( )
 
 void TSnSelEvtsOnCC::Process( )
 {
-    LoadBranch( TSnSaveCalibDataMod::kFPNSubDatBrNm );
+    LoadBranch( TSnSaveCalibDataMod::kAmpOutDatBrNm );
     LoadBranch( TSnRawTreeMaker::kEHdBrNm );
     LoadBranch( TSnRawTreeMaker::kEMtBrNm );
 
@@ -81,7 +87,7 @@ void TSnSelEvtsOnCC::Process( )
     hCCvT->Fill( fHdr->GetUnixTime(), cwvs->GetAvgCC() );
     
 
-    if( cwvs->GetAvgCC() < 0.42 )
+    if( cwvs->GetAvgCC() < 0.45 )
     {
         SkipEvent( );
     }

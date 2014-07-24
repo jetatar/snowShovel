@@ -14,6 +14,7 @@
 #include "TSnConfigTreeLoader.h"
 #include "NSnConstants.h"
 #include "TSnSaveCalibDataMod.h"
+#include "TSnRejectEarlyEvtsMod.h"
 
 #endif
 
@@ -45,12 +46,16 @@ void PruneBadEvents( const Char_t* infn, const Char_t* outfn )
     
     TSnBasicEvtSelMod* besmod = new TSnBasicEvtSelMod( "ThmTrgSelMod" );  
     besmod->GetTrgBits().EnableTrig( TSnTrgInfo::kThermal );
-
     besmod->SetCheckCRC( kTRUE );
+
+    TSnRejectEarlyEvtsMod* ree =
+                    new TSnRejectEarlyEvtsMod( "RejectEarlyEvts" );
+    ree->SetRejectOnlyFirstEvent( 1 );
 
     TSnPruneBadEvtsMod* prnmod = new TSnPruneBadEvtsMod( "PruneBadEventsMod" );
 
-    besmod->Add( prnmod );
+    besmod->Add( ree );
+    ree->Add( prnmod );
 
     sel->AddInput( besmod );
 

@@ -34,41 +34,59 @@ Bool_t TSnRejectEarlyEvtsMod::IsFirstEvtOfSeq() const {
 
 }
 
-void TSnRejectEarlyEvtsMod::Process() {
-   LoadBranch(TSnRawTreeMaker::kCSrBrNm);
-   LoadBranch(TSnRawTreeMaker::kEHdBrNm);
-   if (fHdr!=0) {
-      if (fStart!=0) { // don't bother if we couldn't get the trig start
+void TSnRejectEarlyEvtsMod::Process() 
+{
+    LoadBranch(TSnRawTreeMaker::kCSrBrNm);
+    LoadBranch(TSnRawTreeMaker::kEHdBrNm);
+
+    if (fHdr!=0) 
+    {
+        if (fStart!=0)   // don't bother if we couldn't get the trig start
+        { 
          
-         // abs event time
-         TTimeStamp abstime = TSnClockSetInfo::CalcAbsTime( *fStart, *fHdr );
-         const TTimeStamp& starttm = fStart->CalcAbsCurrTime();
-         if ( (abstime.AsDouble() - starttm.AsDouble()) < fEarlyTime ) {
-            if ( IsRejectingOnlyFirstEvent() ) {
-               LoadBranch(TSnRawTreeMaker::kRunBrNm);
-               LoadBranch(TSnRawTreeMaker::kCMtBrNm);
-               if ((fRunInfo!=0) && (fConfMeta!=0)) {
-                  if ( IsFirstEvtOfSeq() ) {
-                     SkipEvent();
-                  }
-               } else {
-                  SendError(kAbortAnalysis, "Process",
+            // abs event time
+            TTimeStamp abstime = TSnClockSetInfo::CalcAbsTime( *fStart, *fHdr );
+            const TTimeStamp& starttm = fStart->CalcAbsCurrTime();
+
+            if ( (abstime.AsDouble() - starttm.AsDouble()) < fEarlyTime ) 
+            {          
+                if( IsRejectingOnlyFirstEvent() ) 
+                {
+                    LoadBranch(TSnRawTreeMaker::kRunBrNm);
+                    LoadBranch(TSnRawTreeMaker::kCMtBrNm);
+
+                    if ((fRunInfo!=0) && (fConfMeta!=0)) 
+                    {
+                        if ( IsFirstEvtOfSeq() ) 
+                        {
+                            SkipEvent();
+                        }
+                    } 
+                    else 
+                    {
+                        SendError(kAbortAnalysis, "Process",
                             "Could not get run/config info for this sequence! "
                             "Was TSnConfigTreeLoader added to the selector?");
-               }
-            } else {
-               SkipEvent();
+                    }
+                } 
+
+                else 
+                {
+                    SkipEvent();
+                }
             }
-         }
-         
-      } else {
-         SendError(kAbortAnalysis, "Process",
+        } 
+        else 
+        {
+            SendError(kAbortAnalysis, "Process",
                    "Could not get trigger start clock frame! "
                    "Was TSnConfigTreeLoader added to the selector?");
-      }
-   } else {
-      SendError(kAbortAnalysis, "Process",
+        }
+    } 
+    else 
+    {
+        SendError(kAbortAnalysis, "Process",
                 "Could not get event header!");
-   }
-   
+    }
 }
+

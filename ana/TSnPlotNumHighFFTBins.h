@@ -13,8 +13,6 @@ class TSnPlotNumHighFFTBins : public TAModule
 {
     private:
         TSnCalWvData*       fData; 
-        TSnEventHeader*     fHdr;
-        TSnEventMetadata*   fMeta;
         TObjArray*          hNHighPks;
         TH1F*               hNHighPksAllCh;
 //        TH1F*               hNChWithHighPks;

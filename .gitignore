@@ -5,9 +5,11 @@
 *.swp
 *.par
 *.pdf
+*.pyc
 *G__*
 *.rootmap
 *.svn-base
+*.root
 .svn
 sigprocdat/.svn/
 util/.svn/

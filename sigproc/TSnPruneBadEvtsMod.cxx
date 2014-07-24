@@ -80,8 +80,10 @@ void TSnPruneBadEvtsMod::Process( )
 
     if( fFpnSub != 0 )
     {
-        // Select first event only.
+        // Select first event, if it happens to be thermal.
         if( fHdr->GetEvtNum() % fRunInfo->GetEvtsPerSeq() == 0 )
+        // get the second thermal evt of every sequence
+//        if( fHdr->GetTrgNum() == 1 ) 
         {
             // dt of event time and start of sequence.
             UInt_t dt = fHdr->GetUnixTime() - fTrigSC->GetCurrTime().GetSec(); 
