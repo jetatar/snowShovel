@@ -34,11 +34,11 @@ TFile*  fout;
 const Char_t* stnNum    = "0";
 
 // Input file
-const Char_t* infl      = "noisetree.root"; 
+const Char_t* infl      = "stn11.NoiseTree.root"; 
 
 // Output file
 const Char_t* outfn     = 
-    Form("/w1/jtatar/Analysis/Stn%s/pl.stn%s_Nhm.root", 
+    Form("/w1/jtatar/Analysis/Stn%s/pl.stn%s_NhmwithStn11CovMatrix.root", 
                                                             stnNum, stnNum);
 // Signal Templates file
 const Char_t* sigflnm   = "/w1/jtatar/Analysis/Templates/nt.sigtemps.root";
@@ -61,6 +61,7 @@ void NhmNoiseAnalysis( void )
 
     // Remove events with a sharply peaked FFT distribution.
     TSnPlotNumHighFFTBins* nhfft = 
+
                             new TSnPlotNumHighFFTBins( "PlotNumHighFFTBins" );
 
     sel->AddInput( nhfft );

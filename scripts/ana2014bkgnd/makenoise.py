@@ -20,59 +20,60 @@ def plotsampledistribution(noise,A):
   return samp
 
 #Get the pre-made ones
-def readsampledistribution():
+def readsampledistribution(filename):
 
-  sampfile = TFile.Open("deconvolved_samples.root")
+  sampfile = TFile.Open(filename)
   samp = []
   for i in range(0,128):
     samp.append(sampfile.Get("samp{}".format(i)))
 
   return samp
 
-# Get waveform data from files.
-def getnoisedata(n):
+def getnoisedata(n,filename):
 
-  ntfile = TFile.Open("nt.ps.final.root")
-  tree = ntfile.Get("runtree")
+  ntfile = TFile.Open(filename)
+  tree = ntfile.Get("CalibTree")
 
-  i = 0
+  nentries = tree.GetEntries()
+  if n > nentries:
+    n = nentries
+    print "Num. of entries = {}".format(nentries)
   datanoise = []
-  for line in tree:
-    i += 1
-    if (i > n): break
-    ch  = tree.dataps00
+  for i in range(1,n):
+    tree.GetEntry(i)
+    #ch  = tree.AmpOutData.GetData(1)
+    #print len(ch)
+    isforced = tree.EventHeader.IsForced()
     temp = []
-    for samp in ch:
-      temp.append(samp)
-    datanoise.append(temp)
+    if isforced == 0:
+      continue
+    for samp in range(0,128):
+      sample = tree.AmpOutData.GetData(1,samp)
+      if samp == 0 and sample > 1000:
+        break
+      temp.append(float(sample))
+    if len(temp) == 128:
+      datanoise.append(temp)
 
   datanoise = numpy.array(datanoise)
   return numpy.transpose(datanoise)
 
-# Find the covariance matrix for minbias data.
 def getAdata(datanoise):
   R = numpy.cov(datanoise)
   A = numpy.linalg.cholesky(R)
   return A
 
-# Calc covariance matrix for finite bandwidth simulated noise.
 def getAsimnoise(simnoise):
   R = numpy.cov(simnoise)
   A = numpy.linalg.cholesky(R)
   return A
 
-def getAfile():
-  f = open("A.txt","r")
+def getAfile(filename):
+  f = open(filename,"r")
   string = f.read()
   exec string
   return A
 
-# 
-# n - number of events to generate
-# A - lower triangular covariance matrix of minbias data set. 
-#
-#
-#
 def makenoise(n,A,hists):
   noise = numpy.zeros((n,128))
   print len(noise)
@@ -125,12 +126,25 @@ def corrcoef(noise1,noise2):
 
   return temp
 
+def writeAfile(A,filename):
+
+  outfile = open(filename,"w+")
+  string = 'A = numpy.array(['
+  for line in A:
+    temp = '['
+    for entry in line:
+      temp = temp + '{},'.format(entry) 
+    temp = temp[:-1] + '],'
+    string = string + temp
+  string = string[:-1] + '])'
+  outfile.write(string)
+
 #freq = []
 #for i in range(1,66):
 #  freq.append(14.769230*i)
 #freq = numpy.array(freq)
 #
-#noise = getnoisedata(100000)e
+#noise = getnoisedata(100000)
 #A = getAfile()
 #samps = readsampledistribution()
 #simnoise = makenoise(100000,A,samps)

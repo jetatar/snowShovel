@@ -10,7 +10,7 @@
 #include "TH1F.h" 
 
 
-static const Char_t* stnNum     = "11";
+static const Char_t* stnNum     = "3";
 static const UChar_t kNchans    = 4;
 
 static const Char_t* inlrgflnm  = 
@@ -22,7 +22,8 @@ static const Char_t* insmlflnm  =
 static const Char_t* inminbflnm =
     Form("/w1/jtatar/Analysis/Stn%s/pl.stn%s_ampcalib_minbias.root",
                                                             stnNum, stnNum);
-static const Char_t* innoiseflnm = "/w1/jtatar/Analysis/Stn0/pl.stn0_Nhm.root";
+static const Char_t* innoiseflnm = 
+    "/w1/jtatar/Analysis/Stn0/pl.stn0_NhmwithStn11CovMatrix.root";
 
 TString outdir    = Form("/data/users/jtatar/PaperPlots/Stn%s/", stnNum);
 
@@ -114,8 +115,10 @@ void pplNhm_PureThmVsThm( void )
         hnoise[ch]->SetTitle( ";N_{HM};Normalized Num. Events" );
         hnoise[ch]->GetXaxis()->SetRangeUser( -0.5, 27.5 );
 
-        c[ch]->Print( Form("%sNhmPureThmVsThm.pdf", outdir.Data()) );
+        c[ch]->Print( Form("%sNhmPureThmVsThmWithStn11CovMatrix.pdf", 
+                                                            outdir.Data()) );
 
-        c2[ch]->Print( Form("%sLogNhmPureThmVsThm.pdf", outdir.Data()) );
+        c2[ch]->Print( Form("%sLogNhmPureThmVsThmWithStn11CovMatrix.pdf", 
+                                                            outdir.Data()) );
     }
 } 

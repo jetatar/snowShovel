@@ -2,11 +2,12 @@ import makenoise as mk, numpy as np
 import ROOT
 
 n       = 10000
-A       = mk.getAfile()
-samps   = mk.readsampledistribution()
+A       = mk.getAfile( "A_0002F7F175B7.txt" )
+samps   = mk.readsampledistribution( "deconvolved_samples_0002F7F175B7.root" )
 noise   = np.transpose(mk.makenoise(n,A,samps))
 
-rootfile    = ROOT.TFile("noisetree.root","RECREATE")
+# Output file and tree.
+rootfile    = ROOT.TFile("stn11.NoiseTree.root","RECREATE")
 noisetree   = ROOT.TTree( "CalibTree","tree containing arrays of noise" )
 t           = ROOT.TSnCalWvData( "t", "TSnCalWvData" )
 
@@ -21,3 +22,4 @@ for i in range(0,n):
 
 noisetree.Write()
 rootfile.Close()
+
