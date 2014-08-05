@@ -51,8 +51,12 @@ void realisticSignal( void )
 
     TFile* sigfl = new TFile( sigflnm );
     TFile* relfl = new TFile( relflnm );
+    TFile* outfl = new TFile( outfn, "recreate" );
 
     TTree* sigtr = (TTree*)sigfl->Get( "Templates" );
+    TTree* reltr = (TTree*)relfl->Get( "VoltRatio" ); 
+    outfl->cd( );
+    TTree* outtr = new TTree( "CalibTree", "" );
 
     TH1F* hrel[NSnConstants::kNchans];
     TH1F* hScale[NSnConstants::kNchans];
@@ -63,54 +67,80 @@ void realisticSignal( void )
         hScale[ch]  = new TH1F( Form("hScale%d", ch), "", 501, -0.05, 50.05 );
     }
 
-    TSnCalWvData* wv = new TSnCalWvData( "Waveform", "TSnCalWvData" );
+    TSnCalWvData* wv    = new TSnCalWvData( "Waveform", "TSnCalWvData" );
+    TSnCalWvData* outwv = new TSnCalWvData( "Wave", "TSnCalWvData" );
+
+    Float_t vRelToThreshProper[NSnConstants::kNchans];
 
     sigtr->SetBranchAddress( "wave.", &wv );
 
+    reltr->SetBranchAddress( "vRelToThreshProper", &vRelToThreshProper );
+
+    outtr->Branch( "AmpOutData.", &outwv );
     
-    for( ULong64_t j = 0; j < numNoiseEvts; j++ )
+    ULong64_t nevts = reltr->GetEntries( );
+
+    for( ULong64_t j = 0; j < nevts; j++ )
     {
-    sigtr->GetEntry( 28 );
+        reltr->GetEntry( j );
+        sigtr->GetEntry( 28 );
 
 //    Float_t gmax    = TMath::MaxElement(NSnConstants::kNsamps, gSig->GetY());
 //    Float_t gmin    = TMath::MinElement(NSnConstants::kNsamps, gSig->GetY());
 
-    Float_t* samp[NSnConstants::kNchans] = { NULL };
+        Float_t* samp[NSnConstants::kNchans] = { NULL };
 
-    // Copy the original signal waveform from Ch 0 to all other channels.
-    // The script that generates the TSnCalWvData for the templates needs to be
-    // modified so that all channels have the same waveform to start with.    
-    for( UChar_t ch = 1; ch < NSnConstants::kNchans; ch++ )
-    {
-        for( UChar_t sm = 0; sm < NSnConstants::kNsamps; sm++ )
+        // Copy the original signal waveform from Ch 0 to all other channels.
+        // The script that generates the TSnCalWvData for the templates needs to 
+        // be modified so that all channels have the same waveform to start with.
+        for( UChar_t ch = 1; ch < NSnConstants::kNchans; ch++ )
         {
-            wv->SetData( ch, sm, wv->GetData(0, sm) );
-        }
-    }
-
-    for( UChar_t ch = 0; ch < NSnConstants::kNchans; ch++ )
-    {
-        Float_t scaleCh = hrel[ch]->GetRandom( );
-
-        while( scaleCh < 0. )
-        {
-            scaleCh = hrel[ch]->GetRandom( );
+            for( UChar_t sm = 0; sm < NSnConstants::kNsamps; sm++ )
+            {
+                wv->SetData( ch, sm, wv->GetData(0, sm) );
+            }
         }
 
-        Printf( "Ch: %d, Val: %f", ch, scaleCh );
-        hScale[ch]->Fill( scaleCh );        
+        for( UChar_t ch = 0; ch < NSnConstants::kNchans; ch++ )
+        {
+            Float_t scaleCh = hrel[ch]->GetRandom( );
+
+            while( scaleCh < 0. )
+            {
+                scaleCh = hrel[ch]->GetRandom( );
+            }
+
+//            Printf( "Ch: %d, Val: %f", ch, scaleCh );
+            hScale[ch]->Fill( scaleCh );        
  
-        samp[ch] = wv->GetData( ch );
+            samp[ch] = wv->GetData( ch );
 
-        for( UChar_t sm = 0; sm < NSnConstants::kNsamps; sm++ )
-        {
-            samp[ch][sm]    = (*(samp[ch] + sm) * Amplitude + rand->Gaus(0, 20))
-                                                                    * scaleCh;
-        }
+            for( UChar_t sm = 0; sm < NSnConstants::kNsamps; sm++ )
+            {
+                samp[ch][sm]    = (*(samp[ch] + sm) * Amplitude  
+                                    * vRelToThreshProper[ch]) + rand->Gaus(0, 20);
+                /*
+                *
+                * Uncomment code below to get the scale factor drawn from a
+                * distribution of channel voltages sorted by size.
+                *
+                */
+
+//                samp[ch][sm]    = (*(samp[ch] + sm) * Amplitude + 
+//                                                rand->Gaus(0, 20)) * scaleCh;
+            }
         
 //        Printf( "Evt: %llu, Amplitude: %f, Scale: %f", j, Amplitude, scaleCh );
+        }
+
+        outwv = wv;
+        
+        outtr->Fill( );
     }
-    }    
+    
+    outtr->Write( );
+    outfl->Close( );
+/*
     TGraph* gSig[NSnConstants::kNchans];
     TCanvas* cScale[NSnConstants::kNchans];
 
@@ -121,23 +151,24 @@ void realisticSignal( void )
 
         if( ch == 0 )
         {
-//            gSig[ch]->Draw( "APL*" );
             cScale[ch]->cd( );
-            hScale[ch]->Draw( );
+            gSig[ch]->Draw( "APL*" );
+//            hScale[ch]->Draw( );
         }
         else
         {
-//            gSig[ch]->Draw( "PL" );
-//            gSig[ch]->SetLineColor( kRed + ch );
             cScale[ch]->cd( );
-            hScale[ch]->Draw( );
+            gSig[ch]->Draw( "APL*" );
+            gSig[ch]->SetLineColor( kRed + ch );
+//            hScale[ch]->Draw( );
         }
         
-        hrel[ch]->Draw( "SAME" );
-        hrel[ch]->SetLineColor( kMagenta );
+//        hrel[ch]->Draw( "SAME" );
+//        hrel[ch]->SetLineColor( kMagenta );
         
-        hScale[ch]->SetLineColor( ch + 1 );
+//        hScale[ch]->SetLineColor( ch + 1 );
     }
+*/
 /*
 *   Should signal templates' amplitudes be symmetric around 0?  Probably not.
 *   Should the Pk2Pk amplitude be scaled? 

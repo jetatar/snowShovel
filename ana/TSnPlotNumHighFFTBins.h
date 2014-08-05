@@ -12,10 +12,11 @@ class TH2F;
 class TSnPlotNumHighFFTBins : public TAModule
 {
     private:
-        TSnCalWvData*       fData; 
-        TObjArray*          hNHighPks;
-        TH1F*               hNHighPksAllCh;
+        TSnCalWvData*   fData; 
+        TObjArray*      hNHighPks;
+        TH1F*           hNHighPksAllCh;
 //        TH1F*               hNChWithHighPks;
+        TObjArray*      hNHighPksVsMax;
 
     public:
         TSnPlotNumHighFFTBins( ){ }

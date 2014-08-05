@@ -71,10 +71,13 @@ void TriggeredStationVoltages( void )
     Float_t voltRatio[kNchans]; 
     Float_t volt[kNchans];
     Float_t vRelToThresh[kNchans];
-    
+    Float_t vRelToThreshProper[kNchans];   
+ 
     outtr->Branch( "voltRatio", &voltRatio, "voltRatio[4]/F" ); 
     outtr->Branch( "volt",      &volt,      "volt[4]/F" ); 
     outtr->Branch( "vRelToThresh", &vRelToThresh, "vRelToThresh[4]/F" );
+    outtr->Branch( "vRelToThreshProper", &vRelToThreshProper, 
+                                            "vRelToThreshProper[4]/F" );
 
     Float_t direct[4];
     Float_t reflected[4];
@@ -154,6 +157,11 @@ void TriggeredStationVoltages( void )
         {
             Int_t idx[kNchans];
 
+            for( UChar_t ch = 0; ch < kNchans; ch++ )
+            {
+                vRelToThreshProper[ch] = direct[ch] / threshold;
+            }
+
             TMath::Sort( (Int_t)(kNchans), direct, idx );
 
             for( UShort_t c = 0; c < kNchans; c++ )
@@ -180,6 +188,11 @@ void TriggeredStationVoltages( void )
         if( refPassRatio != NULL )
         {
             Int_t idx[kNchans];
+
+            for( UChar_t ch = 0; ch < kNchans; ch++ )
+            {
+                vRelToThreshProper[ch] = reflected[ch] / threshold;
+            }
 
             TMath::Sort( (Int_t)(kNchans), reflected, idx );
 

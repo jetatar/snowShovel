@@ -6,8 +6,11 @@
 #include "TSnEventHeader.h"
 #include "TSnEventMetadata.h"
 #include "TSnRawTreeMaker.h"
+
 #include "TH1F.h"
 #include "TH2F.h"
+#include "TMath.h"
+#include "TGraph.h"
 
 ClassImp( TSnPlotNumHighFFTBins );
 ClassImp( TSnNumHighFFTBinsMod );
@@ -15,9 +18,10 @@ ClassImp( TSnNumHighFFTBinsMod );
 
 TSnPlotNumHighFFTBins::TSnPlotNumHighFFTBins( const Char_t* name ) :
     TAModule(name, "TSnPlotNumHighFFTBins" ), fData(0), hNHighPks(0), 
-    hNHighPksAllCh(0)//, hNChWithHighPks(0)
+    hNHighPksAllCh(0)//, hNChWithHighPks(0), hNHighPksVsMax(0)
 {
-    hNHighPks   = new TObjArray( NSnConstants::kNchans );
+    hNHighPks       = new TObjArray( NSnConstants::kNchans );
+    hNHighPksVsMax  = new TObjArray( NSnConstants::kNchans );
 }
 
 
@@ -31,17 +35,24 @@ void TSnPlotNumHighFFTBins::SlaveBegin( )
     
     for( UChar_t ch = 0; ch < NSnConstants::kNchans; ch++ )
     {
-        TH1F* hhigh = new TH1F( Form("hNHighPks%d", ch), "", TSnCalFFTData::kFftPts + 1, -0.5, TSnCalFFTData::kFftPts + 0.5 );
+        TH1F* hhigh = new TH1F( Form("hNHighPks%d", ch), "", 
+            TSnCalFFTData::kFftPts + 1, -0.5, TSnCalFFTData::kFftPts + 0.5 );
 //        TH1F* hhigh = new TH1F( Form("hNHighPks%d", ch), "", 61, -0.5, 60.5 );
-
+        TH2F* hhivsmax = new TH2F( Form("hNHighPksVsMax%d", ch), "", 
+            TSnCalFFTData::kFftPts + 1, -0.5, TSnCalFFTData::kFftPts + 0.5,
+            5001, -0.5, 5000.5 );
+                
         hNHighPks->AddAt( hhigh, ch );
+        hNHighPksVsMax->AddAt( hhivsmax, ch );
     }
 
     hNHighPksAllCh->SetName( "hNHighPksAllCh" );
     hNHighPks->SetName( "hNHighPks" );
+    hNHighPksVsMax->SetName( "hNHighPksVsMax" );
 
     AddOutput( hNHighPks );
     AddOutput( hNHighPksAllCh );
+    AddOutput( hNHighPksVsMax );
 }
 
 
@@ -57,17 +68,26 @@ void TSnPlotNumHighFFTBins::Process( )
 
     nhFFTBins->Calculate( );
 
+
     UInt_t nHighBins[NSnConstants::kNchans];
     UChar_t totHighBins = 0;
 
     //for( UChar_t ch = 0; ch < 1; ch++ )
     for( UChar_t ch = 0; ch < NSnConstants::kNchans; ch++ )
     {
-        nHighBins[ch] = nhFFTBins->GetNumHighBins( ch );
+        TGraph* gMax    = fData->NewGraphForChan( ch );
+        Float_t max     = TMath::MaxElement( NSnConstants::kNsamps, 
+                                                                gMax->GetY() );
+        Float_t nhibins = nhFFTBins->GetNumHighBins( ch );
+        nHighBins[ch]   = nhibins;
+
         hNHighPksAllCh->Fill( nHighBins[ch] );
 
         TH1F* hhigh = dynamic_cast<TH1F*>( hNHighPks->At(ch) );
         hhigh->Fill( nHighBins[ch] );
+
+        TH2F* hhivsmax = dynamic_cast<TH2F*>( hNHighPksVsMax->At(ch) );
+        hhivsmax->Fill( nhibins, max );
 
 //        if( nHighBins[ch] >= 4 )
 //        {
