@@ -34,13 +34,15 @@ TFile*  fout;
 const Char_t* stnNum    = "0";
 
 // Input file
-const Char_t* infl      = "/w1/jtatar/Analysis/Stn0/realisticSignal.root"; 
-
+//const Char_t* infl      = "/w1/jtatar/Analysis/Stn0/realisticSignal.root"; 
+//const Char_t* infl = "/w1/jtatar/Analysis/Stn0/realisticSignal_Ch0EqCh2_ReflectedOnly.root";
+const Char_t* infl = "/w1/jtatar/Analysis/Templates/nt.onlytemplates.root";
 // Output file
 //const Char_t* outfn     = 
 //    Form("/w1/jtatar/Analysis/Stn%s/pl.stn%s_NhmwithStn11CovMatrix.root", 
 //                                                            stnNum, stnNum);
-TString outfn = "/w1/jtatar/Analysis/Stn0/pl.realisticSignalNhm.root";
+//TString outfn = "/w1/jtatar/Analysis/Stn0/pl.realisticSignalNhm_Ch0EqCh2_ReflectedOnly.root";
+TString outfn = "/w1/jtatar/Analysis/Stn0/pl.rawTemplates.root";
 
 // Signal Templates file
 const Char_t* sigflnm   = "/w1/jtatar/Analysis/Templates/nt.sigtemps.root";

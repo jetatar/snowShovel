@@ -12,7 +12,7 @@ static const Char_t* inflnm =
         "/w1/jtatar/Analysis/Stn0/result_Jul16_1000000_GZK_5sig_realAT.root";
 
 //TString outflnm = "/w1/jtatar/Analysis/Stn0/nt.relStnVolt.root";
-TString outflnm = "nt.relStnVoltNoNoise.root";
+TString outflnm = "nt.relStnVoltNoNoise_Ch0EqCh2_ReflectedOnly.root";
 
 
 const UShort_t kNchans      = 4;
@@ -152,7 +152,7 @@ void TriggeredStationVoltages( void )
             totBoth++;
         }
 
-
+/*
         if( dirPassRatio != NULL )
         {
             Int_t idx[kNchans];
@@ -184,14 +184,21 @@ void TriggeredStationVoltages( void )
 
             delete[] dirPassRatio;
         }
-
+*/
         if( refPassRatio != NULL )
         {
             Int_t idx[kNchans];
 
             for( UChar_t ch = 0; ch < kNchans; ch++ )
             {
-                vRelToThreshProper[ch] = reflected[ch] / threshold;
+                if( ch == 2 )
+                {
+                    vRelToThreshProper[ch] = reflected[0] / threshold;
+                }
+                else
+                {
+                    vRelToThreshProper[ch] = reflected[ch] / threshold;
+                }
             }
 
             TMath::Sort( (Int_t)(kNchans), reflected, idx );

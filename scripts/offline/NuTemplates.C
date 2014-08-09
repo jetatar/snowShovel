@@ -5,6 +5,7 @@
 #include <TTree.h>
 #include <TGraph.h>
 #include <TRandom3.h>
+#include <TMath.h>
 
 #include <algorithm>
 #include <utility>
@@ -18,9 +19,10 @@
 static const Char_t* fin = 
                 "/data/users/jtatar/Work/Cosmic/Templates/nt.sigtemps.root";
 //             "/data/users/jtatar/Work/Cosmic/Templates/PCD_100MHzHPF.dat.root";
-
+//            "/w1/jtatar/Analysis/Templates/nt.onlytemplates.root";
 //static const Char_t* foutnm = "bouncenonoise.root";
-static const Char_t* foutnm = "nu100sigwithnoise.root";
+//static const Char_t* foutnm = "nu100sigwithnoise.root";
+static const Char_t* foutnm = "test2.root";
 
 const Float_t kSmpRate   = 1.92; // GHz
 const Float_t kDelta     = 1.0 / kSmpRate;
@@ -32,14 +34,16 @@ void NuTemplates( void )
     TFile* fl = new TFile( fin );
 
     TTree* tr = (TTree*)fl->Get( "Templates" );
+    //TTree* tr = (TTree*)fl->Get( "CalibTree" );
 
     TSnCalWvData* wv = new TSnCalWvData( "wave", "TSnCalWvData" );
     Float_t EAng;
     Float_t HAng;
 
     tr->SetBranchAddress( "wave.",  &wv );
-    tr->SetBranchAddress( "EAng",   &EAng );
-    tr->SetBranchAddress( "HAng",   &HAng );
+    //tr->SetBranchAddress( "AmpOutData.",  &wv );
+//    tr->SetBranchAddress( "EAng",   &EAng );
+//    tr->SetBranchAddress( "HAng",   &HAng );
 
     TFile* fout = new TFile( foutnm, "recreate" );
     TTree* nutr = new TTree( "Templates", "" );
@@ -49,8 +53,8 @@ void NuTemplates( void )
     Float_t nuHAng;
 
     nutr->Branch( "wave.",  nuwv, 262144, 1 );
-    nutr->Branch( "EAng",   &nuEAng );
-    nutr->Branch( "HAng",   &nuHAng );
+//    nutr->Branch( "EAng",   &nuEAng );
+//    nutr->Branch( "HAng",   &nuHAng );
 
     TRandom3* rand  = new TRandom3( );
 
@@ -84,14 +88,15 @@ void NuTemplates( void )
         nuEAng = EAng;
         nuHAng = HAng;
         
-        for( UInt_t num = 0; num < 1000; num++ )
+//        for( UInt_t num = 0; num < 1000; num++ )
         {
             // Add noise to signal templates.
             for( UChar_t sm = 0; sm < NSnConstants::kNsamps; sm++ )
             {
                 Float_t noisy = 0;
         
-                noisy = *(pNoisy + sm) * 100. + rand->Gaus( 0, 20 );
+//                noisy = *(pNoisy + sm) * 100. + rand->Gaus( 0, 20 );
+                noisy = *(pNoisy + sm);
 
                 nuwv->SetData( 0, sm, noisy );
             }
@@ -99,27 +104,32 @@ void NuTemplates( void )
             TSnCalFFTData* nufft = new TSnCalFFTData( "", "", *nuwv );
             TSnCalFFTData* fft  = new TSnCalFFTData( "", "", *nuwv );
             //TSnCalFFTData* fft  = new TSnCalFFTData( "", "", *wv );
-            Float_t* pfft       = fft->GetFFTData( 0 );
 
-            Float_t* peakValue  = std::max_element( pfft, 
-                                                pfft + TSnCalFFTData::kFftPts);
+//            Float_t* pfft       = fft->GetFFTData( 0 );
+            Float_t fftmag[TSnCalFFTData::kFftPts];
+
+            for( UChar_t b = 0; b < TSnCalFFTData::kFftPts; b++ )
+            {
+               fftmag[b] = fft->GetFFTMag( 0, b ); 
+            }
+
+            Float_t maxfftval   = TMath::MaxElement( TSnCalFFTData::kFftPts, 
+                                                                    fftmag );
             UInt_t nhighbins    = 0;
 
             for( UChar_t pt = 0; pt < TSnCalFFTData::kFftPts; pt++ )
             {
-                Float_t binVal  = *(pfft + pt );
-//                avgfft[pt]      += binVal;
-
-                if( binVal > *peakValue / 2 )
+                if( fftmag[pt] > maxfftval / 2 )
                 {
                     nhighbins++;
                 }
             }
 
-            maxElem = fft->GetFreqData( std::distance(pfft, peakValue) );
+            //maxElem = fft->GetFrequency( std::distance(pfft, peakValue) );
+            //maxElem = fft->GetFreqData( std::distance(pfft, peakValue) );
 
 //            hpeak->Fill( maxElem );
-//            hNHighPks->Fill( nhighbins );
+            hNHighPks->Fill( nhighbins );
 
 //            hNHighPksvsEAng[int(EAng/10)]->Fill( nhighbins );
 
@@ -137,6 +147,8 @@ void NuTemplates( void )
             delete fft;
         }
     }
+
+    hNHighPks->Write( "hNHighPks" );
 
     fl->Close( );
 

@@ -17,6 +17,7 @@ class TSnPlotNumHighFFTBins : public TAModule
         TH1F*           hNHighPksAllCh;
 //        TH1F*               hNChWithHighPks;
         TObjArray*      hNHighPksVsMax;
+        TH2F*           hNHighPksVsMaxAllCh;
 
     public:
         TSnPlotNumHighFFTBins( ){ }

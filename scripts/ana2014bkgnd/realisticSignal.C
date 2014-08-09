@@ -36,13 +36,16 @@
 TString sigflnm = "/w1/jtatar/Analysis/Templates/nt.sigtemps.root";
 
 // File containing the relevant channel voltages.
-TString relflnm = "nt.relStnVoltNoNoise.root"; 
+//TString relflnm = "nt.relStnVoltNoNoise.root"; 
+TString relflnm = "nt.relStnVoltNoNoise_Ch0EqCh2_ReflectedOnly.root";
 
 // Output file
-TString outfn     = "/w1/jtatar/Analysis/Stn0/realisticSignal.root";
+//TString outfn     = "/w1/jtatar/Analysis/Stn0/realisticSignal_Ch0EqCh2_ReflectedOnly.root";
+TString outfn = "/w1/jtatar/Analysis/Templates/nt.onlytemplates.root";
+
 
 Float_t Amplitude       = 100.;    // in mV
-ULong64_t numNoiseEvts  = 10000;
+ULong64_t numNoiseEvts  = 100;
 
 
 void realisticSignal( void )
@@ -74,25 +77,17 @@ void realisticSignal( void )
 
     sigtr->SetBranchAddress( "wave.", &wv );
 
-    reltr->SetBranchAddress( "vRelToThreshProper", &vRelToThreshProper );
+    reltr->SetBranchAddress( "vRelToThreshProper", vRelToThreshProper );
 
     outtr->Branch( "AmpOutData.", &outwv );
     
-    ULong64_t nevts = reltr->GetEntries( );
+    ULong64_t nevts     = reltr->GetEntries( );
+    ULong64_t nsigevts  = sigtr->GetEntries( ); 
 
-    for( ULong64_t j = 0; j < nevts; j++ )
+    for( ULong64_t i = 0; i < nsigevts; i++ )
     {
-        reltr->GetEntry( j );
-        sigtr->GetEntry( 28 );
+        sigtr->GetEntry( i );
 
-//    Float_t gmax    = TMath::MaxElement(NSnConstants::kNsamps, gSig->GetY());
-//    Float_t gmin    = TMath::MinElement(NSnConstants::kNsamps, gSig->GetY());
-
-        Float_t* samp[NSnConstants::kNchans] = { NULL };
-
-        // Copy the original signal waveform from Ch 0 to all other channels.
-        // The script that generates the TSnCalWvData for the templates needs to 
-        // be modified so that all channels have the same waveform to start with.
         for( UChar_t ch = 1; ch < NSnConstants::kNchans; ch++ )
         {
             for( UChar_t sm = 0; sm < NSnConstants::kNsamps; sm++ )
@@ -101,43 +96,64 @@ void realisticSignal( void )
             }
         }
 
-        for( UChar_t ch = 0; ch < NSnConstants::kNchans; ch++ )
+//        for( ULong64_t j = 0; j < nevts; j++ )
         {
-            Float_t scaleCh = hrel[ch]->GetRandom( );
+//            reltr->GetEntry( j );
 
-            while( scaleCh < 0. )
+//    Float_t gmax    = TMath::MaxElement(NSnConstants::kNsamps, gSig->GetY());
+//    Float_t gmin    = TMath::MinElement(NSnConstants::kNsamps, gSig->GetY());
+
+//            Float_t* samp[NSnConstants::kNchans] = { NULL };
+
+        // Copy the original signal waveform from Ch 0 to all other channels.
+        // The script that generates the TSnCalWvData for the templates needs to 
+        // be modified so that all channels have the same waveform to start with.
+            outwv->ClearAll( );
+
+            for( UChar_t ch = 0; ch < NSnConstants::kNchans; ch++ )
             {
-                scaleCh = hrel[ch]->GetRandom( );
-            }
+                Float_t scaleCh = hrel[ch]->GetRandom( );
+
+                while( scaleCh < 0. )
+                {
+                    scaleCh = hrel[ch]->GetRandom( );
+                }
 
 //            Printf( "Ch: %d, Val: %f", ch, scaleCh );
-            hScale[ch]->Fill( scaleCh );        
+//                hScale[ch]->Fill( scaleCh );        
  
-            samp[ch] = wv->GetData( ch );
+//                samp[ch] = wv->GetData( ch );
 
-            for( UChar_t sm = 0; sm < NSnConstants::kNsamps; sm++ )
-            {
-                samp[ch][sm]    = (*(samp[ch] + sm) * Amplitude  
-                                    * vRelToThreshProper[ch]) + rand->Gaus(0, 20);
+                for( UChar_t sm = 0; sm < NSnConstants::kNsamps; sm++ )
+                {
+//                    Float_t v = wv->GetData(ch, sm) * Amplitude *
+//                                vRelToThreshProper[ch];
+//                    v += rand->Gaus( 0, 20 );
+                    Float_t v = wv->GetData(ch, sm);
+                    outwv->SetData( ch, sm, v );
+//                    samp[ch][sm]    = (*(samp[ch] + sm) * Amplitude  
+//                                    * vRelToThreshProper[ch]) + rand->Gaus(0, 20);
                 /*
                 *
                 * Uncomment code below to get the scale factor drawn from a
+
                 * distribution of channel voltages sorted by size.
                 *
                 */
 
 //                samp[ch][sm]    = (*(samp[ch] + sm) * Amplitude + 
 //                                                rand->Gaus(0, 20)) * scaleCh;
-            }
+                }
         
 //        Printf( "Evt: %llu, Amplitude: %f, Scale: %f", j, Amplitude, scaleCh );
-        }
+            }
 
-        outwv = wv;
+//            outwv = wv;
         
-        outtr->Fill( );
+            outtr->Fill( );
+        }
     }
-    
+
     outtr->Write( );
     outfl->Close( );
 /*

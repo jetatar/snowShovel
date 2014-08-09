@@ -18,7 +18,8 @@ ClassImp( TSnNumHighFFTBinsMod );
 
 TSnPlotNumHighFFTBins::TSnPlotNumHighFFTBins( const Char_t* name ) :
     TAModule(name, "TSnPlotNumHighFFTBins" ), fData(0), hNHighPks(0), 
-    hNHighPksAllCh(0)//, hNChWithHighPks(0), hNHighPksVsMax(0)
+    hNHighPksAllCh(0), hNHighPksVsMax(0), hNHighPksVsMaxAllCh(0)
+    //, hNChWithHighPks(0), 
 {
     hNHighPks       = new TObjArray( NSnConstants::kNchans );
     hNHighPksVsMax  = new TObjArray( NSnConstants::kNchans );
@@ -30,7 +31,10 @@ void TSnPlotNumHighFFTBins::SlaveBegin( )
 //    ReqBranch( TSnSaveCalibDataMod::kFPNSubDatBrNm, fData );
     ReqBranch( TSnSaveCalibDataMod::kAmpOutDatBrNm, fData );
 
-    hNHighPksAllCh  = new TH1F( "hNHighPksAllCh", "", 61, -0.5, 60.5 );
+    hNHighPksAllCh      = new TH1F( "hNHighPksAllCh", "", 61, -0.5, 60.5 );
+    hNHighPksVsMaxAllCh = new TH2F( "hNHighPksVsMaxAllCh", "", 
+            TSnCalFFTData::kFftPts + 1, -0.5, TSnCalFFTData::kFftPts + 0.5,
+            5001, -0.5, 5000.5 );
 //    hNChWithHighPks = new TH1F( "hNChWithHighPks", "", 5, -0.5, 4.5 ); 
     
     for( UChar_t ch = 0; ch < NSnConstants::kNchans; ch++ )
@@ -53,6 +57,7 @@ void TSnPlotNumHighFFTBins::SlaveBegin( )
     AddOutput( hNHighPks );
     AddOutput( hNHighPksAllCh );
     AddOutput( hNHighPksVsMax );
+    AddOutput( hNHighPksVsMaxAllCh );
 }
 
 
@@ -89,6 +94,7 @@ void TSnPlotNumHighFFTBins::Process( )
         TH2F* hhivsmax = dynamic_cast<TH2F*>( hNHighPksVsMax->At(ch) );
         hhivsmax->Fill( nhibins, max );
 
+        hNHighPksVsMaxAllCh->Fill( nhibins, max );
 //        if( nHighBins[ch] >= 4 )
 //        {
 //          totHighBins++;

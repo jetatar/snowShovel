@@ -6,6 +6,8 @@
 #include "TSnNumHighFFTBinsMod.h"
 #include "TSnCalFFTData.h"
 
+#include "TMath.h"
+
 ClassImp( TSnNumHighFFTBinsMod );
 
 
@@ -13,18 +15,20 @@ void TSnNumHighFFTBinsMod::Calculate( )
 {
     for( UChar_t ch = 0; ch < NSnConstants::kNchans; ch++ )
     {
-        Float_t* pFFT    = fFFT->GetFFTData( ch );
-        Float_t* pmaxFFT = std::max_element( pFFT, 
-                                             pFFT + TSnCalFFTData::kFftPts );
-            
-        UInt_t nhighbins = 0;
+        Float_t magFFT[TSnCalFFTData::kFftPts];
+
+        for( UChar_t b = 0; b < TSnCalFFTData::kFftPts; b++ )
+        {
+            magFFT[b] = fFFT->GetFFTMag( ch, b ); 
+        }
+
+        Float_t maxFFTVal = TMath::MaxElement( TSnCalFFTData::kFftPts, magFFT );
+        UInt_t nhighbins  = 0;
 
         for( UChar_t bin = 0; bin < TSnCalFFTData::kFftPts; bin++ )
         {
-            Float_t binVal = pFFT[bin];
-    
-            if( binVal > (*pmaxFFT) / 2 )
-            {
+            if( magFFT[bin] > maxFFTVal / 2. )
+            {    
                 nhighbins++;
             }
         }
@@ -38,3 +42,4 @@ UInt_t TSnNumHighFFTBinsMod::GetNumHighBins( UChar_t ch )
 {
     return( nHighBins[ch] );
 }
+
