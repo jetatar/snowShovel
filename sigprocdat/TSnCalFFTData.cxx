@@ -75,12 +75,12 @@ void TSnCalFFTData::AssertSamp(const UChar_t sm) const {
    }
 }
 
-const Float_t* TSnCalFFTData::GetFFTData(const UChar_t ch) const {
+const Float_t* TSnCalFFTData::GetFFTRawCoefs(const UChar_t ch) const {
    AssertChan(ch);
    return &(fFFT[ch][0]);
 }
 
-Float_t* TSnCalFFTData::GetFFTData(const UChar_t ch) {
+Float_t* TSnCalFFTData::GetFFTRawCoefs(const UChar_t ch) {
    AssertChan(ch);
    return &(fFFT[ch][0]);
 }
@@ -317,7 +317,7 @@ TSnCalWvData*  TSnCalFFTData::NewDataFromInverseFFT() const {
                                       Form("inverted fft (%s)",GetTitle()));
    for (UChar_t ch=0; ch<NSnConstants::kNchans; ++ch) {
       Float_t* const dch = d->GetData(ch);
-      memcpy(dch, GetFFTData(ch), sizeof(Float_t)*NSnConstants::kNsamps);
+      memcpy(dch, GetFFTRawCoefs(ch), sizeof(Float_t)*NSnConstants::kNsamps);
       TSnSpectral::RealFFT(dch, NSnConstants::kNsamps, kTRUE);
    }
    return d;

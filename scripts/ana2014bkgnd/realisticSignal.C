@@ -33,15 +33,17 @@
 #endif
 
 // Signal Templates file
-TString sigflnm = "/w1/jtatar/Analysis/Templates/nt.sigtemps.root";
+TString sigflnm     = "/w1/jtatar/Analysis/Templates/nt.sigtemps.root";
 
 // File containing the relevant channel voltages.
 //TString relflnm = "nt.relStnVoltNoNoise.root"; 
-TString relflnm = "nt.relStnVoltNoNoise_Ch0EqCh2_ReflectedOnly.root";
+TString relflnm     = "nt.relStnVoltNoNoise_Ch0EqCh2_ReflectedOnly.root";
+
+TString noiseflnm   = "/w1/jtatar/Analysis/Stn0/stn11.NoiseTree.root";
 
 // Output file
 //TString outfn     = "/w1/jtatar/Analysis/Stn0/realisticSignal_Ch0EqCh2_ReflectedOnly.root";
-TString outfn = "/w1/jtatar/Analysis/Templates/nt.onlytemplates.root";
+TString outfn = "/w1/jtatar/Analysis/Templates/nt.realisticSignalFiniteBW.root";
 
 
 Float_t Amplitude       = 100.;    // in mV
@@ -54,10 +56,12 @@ void realisticSignal( void )
 
     TFile* sigfl = new TFile( sigflnm );
     TFile* relfl = new TFile( relflnm );
+    TFile* nozfl = new TFile( noiseflnm );
     TFile* outfl = new TFile( outfn, "recreate" );
 
     TTree* sigtr = (TTree*)sigfl->Get( "Templates" );
     TTree* reltr = (TTree*)relfl->Get( "VoltRatio" ); 
+    TTree* noztr = (TTree*)nozfl->Get( "CalibTree" );
     outfl->cd( );
     TTree* outtr = new TTree( "CalibTree", "" );
 
@@ -74,8 +78,10 @@ void realisticSignal( void )
     TSnCalWvData* outwv = new TSnCalWvData( "Wave", "TSnCalWvData" );
 
     Float_t vRelToThreshProper[NSnConstants::kNchans];
+    TSnCalWvData* fbNoise = new TSnCalWvData;
 
     sigtr->SetBranchAddress( "wave.", &wv );
+    noztr->SetBranchAddress( "AmpOutData.", &fbNoise );
 
     reltr->SetBranchAddress( "vRelToThreshProper", vRelToThreshProper );
 
@@ -96,12 +102,14 @@ void realisticSignal( void )
             }
         }
 
-//        for( ULong64_t j = 0; j < nevts; j++ )
+        for( ULong64_t j = 0; j < nevts; j++ )
         {
-//            reltr->GetEntry( j );
+            reltr->GetEntry( j );
+            noztr->GetEntry( j );
 
 //    Float_t gmax    = TMath::MaxElement(NSnConstants::kNsamps, gSig->GetY());
 //    Float_t gmin    = TMath::MinElement(NSnConstants::kNsamps, gSig->GetY());
+
 
 //            Float_t* samp[NSnConstants::kNchans] = { NULL };
 
@@ -126,10 +134,10 @@ void realisticSignal( void )
 
                 for( UChar_t sm = 0; sm < NSnConstants::kNsamps; sm++ )
                 {
-//                    Float_t v = wv->GetData(ch, sm) * Amplitude *
-//                                vRelToThreshProper[ch];
-//                    v += rand->Gaus( 0, 20 );
-                    Float_t v = wv->GetData(ch, sm);
+                    Float_t v = wv->GetData(ch, sm) * Amplitude *
+                                vRelToThreshProper[ch];
+                    v += fbNoise->GetData( ch, sm );
+//                    Float_t v = wv->GetData(ch, sm);
                     outwv->SetData( ch, sm, v );
 //                    samp[ch][sm]    = (*(samp[ch] + sm) * Amplitude  
 //                                    * vRelToThreshProper[ch]) + rand->Gaus(0, 20);

@@ -23,53 +23,62 @@
 #include "TSnPlotNumHighFFTBins.h"
 //#include "TSnCorrelateWavesMod.h"
 //#include "TSnRejectBadClocksMod.h"
+#include "TSnChanTimeCorlAltEvtsMod.h"
+#include "TSnFindPureThermalFromAutoCorrMod.h"
 
 #include "NSnConstants.h"
 
 #endif
 
-#include "/data/users/jtatar/Work/snowShovel/scripts/offline/loadtree.C" 
+// make a softlink: "ln -s ../offline/loadtree.C"
+#include "loadtree.C" 
 
 
 TChain* nt( 0 );
 TFile*  fout;
 
 // Station number
-const Char_t* stnNum    = "11";
+const Char_t* stnNum    = "3";
 
 // Input file
-const Char_t* infl      = 
-    Form("/w1/jtatar/Analysis/Stn%s/CalTree.CombNoHtbt.RawTree.Stn%sEvts.root", 
-                                                            stnNum, stnNum);
+TString infl      = 
+//    Form("/w1/jtatar/Analysis/Stn%s/CalTree.CombNoHtbt.RawTree.Stn%sEvts.root", 
+//                                                            stnNum, stnNum);
+//    Form("/w1/arianna/2014_InSitu/combinedNoHtbt/CalTree/"
+//         "CalTree.CombNoHtbt.RawTree.Stn%sEvts.root", 
+   Form("/w1/arianna/2014_InSitu/combinedNoHtbt/CalTree/"
+        "SingleSidedInvertedCh2Ch3/CalTree.CombNoHtbt.RawTree.Stn%sEvts.root", 
+         stnNum);//, stnNum);
+
+
 
 // Output file
-const Char_t* outfn     = 
-    Form("/w1/jtatar/Analysis/Stn%s/pl.stn%s_ampcalib_minbias.root", 
-                                                            stnNum, stnNum);
+TString outfn     = 
+//    Form("/w1/jtatar/Analysis/Stn%s/pl.stn%s_minbias.root", 
+//                                                            stnNum, stnNum);
+   Form("~/work/BkgndReject/NHM/"
+        "plots.stn%s.SingleSidedInvertedCh2Ch3.frcPureThemNonThm.root", stnNum);
+   
 // Signal Templates file
-const Char_t* sigflnm   = "/w1/jtatar/Analysis/Templates/nt.sigtemps.root";
+//const Char_t* sigflnm   = "/w1/jtatar/Analysis/Templates/nt.sigtemps.root";
+const Char_t* sigflnm   = "/w1/arianna/jtatar/Templates/nt.sigtemps.root";
 
 
 void NuAnalysis( void )
 {
     delete nt;
 
-    const Bool_t bOk = tryLoadDataTree( infl, nt );
+    TString dataBranchName;
+    const Bool_t bOk = tryLoadDataTree( infl.Data(), nt, &dataBranchName );
 
     if( !bOk )
     {
-        Printf( "! Could not load data from: %s.\n", infl );
+        Printf( "! Could not load data from: %s.\n", infl.Data() );
 
         return;
     }
 
     TAMSelector* sel        = new TAMSelector;
-
-    // Select THERMAL events
-    TSnBasicEvtSelMod*  bes = new TSnBasicEvtSelMod( "BES" );
-    //bes->GetTrgBits().EnableTrig( TSnTrgInfo::kThermal );
-    bes->GetTrgBits().EnableTrig( TSnTrgInfo::kForced );
-    bes->SetCheckCRC( kTRUE );
 
     // Config Tree Loader needed by TSnRejectEarlyEvtsMod
     TSnConfigTreeLoader* confLoader = new TSnConfigTreeLoader;
@@ -82,11 +91,57 @@ void NuAnalysis( void )
     // Reject only first event within 2 sec rather than the default, 
     // which is all events within 2 sec of the start of a sequence.
     ree->SetRejectOnlyFirstEvent( 1 );
+    
+    // use module hierarchy to make 3 bins of plots:
+    //               reject early evts
+    //       +--------------^----------------+
+    //  forced trgs                     thermal trgs
+    //                                       |
+    //                                 auto correlate
+    //                                       |
+    //       |                    +----------^-----------+
+    //  frc trg plots        select pure thm         select non-thm
+    //                            |                      |
+    //                       pure thm plots          non-thm plots
+    
+    // Select forced events
+    TSnBasicEvtSelMod*  besfrc = new TSnBasicEvtSelMod( "Forced" );
+    besfrc->GetTrgBits().EnableTrig( TSnTrgInfo::kForced );
+    besfrc->SetCheckCRC( kTRUE );
 
+    // Select THERMAL events
+    TSnBasicEvtSelMod*  besthm = new TSnBasicEvtSelMod( "Thermal" );
+    besthm->GetTrgBits().EnableTrig( TSnTrgInfo::kThermal );
+    besthm->SetCheckCRC( kTRUE );
+    
+    // find auto correlation
+    TSnChanTimeCorlAltEvtsMod* autocc
+       = new TSnChanTimeCorlAltEvtsMod("AutoCorrelateMod",
+                                       dataBranchName.Data(),
+                                       dataBranchName.Data());
+    autocc->SetCorrelationsName("AutoCorrelations.");
+    
+    // select pure thermal
+    TSnFindPureThermalFromAutoCorrMod* fptPureThm
+       = new TSnFindPureThermalFromAutoCorrMod("SelPureThm");
+    fptPureThm->SetTagBehavior("CutNonPureThermal");
+    fptPureThm->SetAutoCorrName(autocc->GetCorrelationsName());
+    
+    // select non-thermal
+    TSnFindPureThermalFromAutoCorrMod* fptNonThm
+       = new TSnFindPureThermalFromAutoCorrMod("SelNonThm");
+    fptNonThm->SetTagBehavior("CutPureThermal");
+    fptNonThm->SetAutoCorrName(autocc->GetCorrelationsName());
+    
+    
     // Remove events with a sharply peaked FFT distribution.
-    TSnPlotNumHighFFTBins* nhfft = 
-                            new TSnPlotNumHighFFTBins( "PlotNumHighFFTBins" );
-
+    TSnPlotNumHighFFTBins* nhfftFrc = 
+       new TSnPlotNumHighFFTBins( "ForcedPlots", "Forced" );
+    TSnPlotNumHighFFTBins* nhfftPureThm = 
+       new TSnPlotNumHighFFTBins( "PureThermPlots", "PureThm" );
+    TSnPlotNumHighFFTBins* nhfftNonThm = 
+       new TSnPlotNumHighFFTBins( "NonThermPlots", "NonThm" );
+    
     //
     //  Correlation Coefficients Calculation Section
     //
@@ -116,17 +171,37 @@ void NuAnalysis( void )
     //  End Correlation Coefficients Calculation Section
     //
 
-
+/*
     // Order event processing modules 
     sel->AddInput( bes );
-    bes->Add( nhfft );
-//    bes->Add( ree );
+//    bes->Add( nhfft );
+    bes->Add( ree );
 //    ree->Add( selCC );
+    ree->Add( nhfft );
 //    selCC->Add( nhfft );
-
+*/
+    
+    sel->AddInput( ree );
+    // forced branch
+    ree->Add(besfrc);
+    besfrc->Add(nhfftFrc);
+    // thermal branch
+    ree->Add(besthm);
+    besthm->Add(autocc);
+    // thermal/pure sub-branch
+    autocc->Add(fptPureThm);
+    fptPureThm->Add(nhfftPureThm);
+    // thermal/bkgnd sub-branch
+    autocc->Add(fptNonThm);
+    fptNonThm->Add(nhfftNonThm);
+    
     // PROCESS events.
+    
+    sel->SetVerbosity(10);
+    
     Printf( "Processing events..." );
-    nt->Process( sel, "" );
+    nt->Process( sel, "");
+    //nt->Process( sel, "", 100 );
     Printf( "Finished processing events." );
 
 
@@ -136,7 +211,7 @@ void NuAnalysis( void )
     if( outmod != 0 )
     {
         Printf( "Writing output..." );
-        fout = TFile::Open( outfn, "recreate" );
+        fout = TFile::Open( outfn.Data(), "recreate" );
 
         fout->cd( );
         outmod->Write( );

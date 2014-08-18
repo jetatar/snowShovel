@@ -13,6 +13,7 @@
 
 #include "TSnCalWvData.h"
 #include "TSnCalFFTData.h"
+#include "TSnNumHighFFTBinsMod.h"
 
 #endif
 

@@ -368,6 +368,20 @@ void TAModule::ls(Option_t *option) const
    TROOT::DecreaseDirLevel();
 }
 
+//______________________________________________________________________________
+void TAModule::ListObjsThisEvt(Option_t* option /*= ""*/) const
+{
+   // List all objects in the event object table.
+   // Wildcarding supported, eg option="xxx*" lists only objects
+   // with names xxx*.
+   
+   if (fSelector!=0) {
+      fSelector->ListObjsThisEvt(option);
+   } else {
+      Error("FindPublicObj",
+            "No selector exists, so there is no list of event objects. ");
+   }
+}
 
 //______________________________________________________________________________
 void TAModule::LoadBranch(const Char_t* bname) 

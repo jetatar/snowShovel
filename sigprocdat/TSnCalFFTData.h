@@ -86,8 +86,8 @@ class TSnCalFFTData : public TNamed {
    Float_t        GetConvToPowerFactor() const { return fToPower; }
    
    // "raw" getters -- probably not very useful
-   const Float_t* GetFFTData(const UChar_t ch) const;
-         Float_t* GetFFTData(const UChar_t ch);
+   const Float_t* GetFFTRawCoefs(const UChar_t ch) const;
+         Float_t* GetFFTRawCoefs(const UChar_t ch);
    const Float_t* GetFreqData() const { return fFreq; }
          Float_t* GetFreqData()       { return fFreq; }
    

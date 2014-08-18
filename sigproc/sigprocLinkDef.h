@@ -63,6 +63,9 @@
 #pragma link C++ function TSnTreeBuilderMod::AddBranchForEvtObj<TSnCalFFTData>;
 #pragma link C++ function TSnTreeBuilderMod::AddBranchForEvtObj<TSnStopPosnSet>;
 #pragma link C++ function TSnTreeBuilderMod::AddBranchForEvtObj< TParameter<Double_t> >;
+#pragma link C++ function TSnTreeBuilderMod::AddBranchForEvtObj< TParameter<Float_t> >;
+#pragma link C++ function TSnTreeBuilderMod::AddBranchForEvtObj< TParameter<Int_t> >;
+#pragma link C++ function TSnTreeBuilderMod::AddBranchForEvtObj< TParameter<Bool_t> >;
 #pragma link C++ function TSnTreeBuilderMod::AddBranchForEvtObj<TObjArray>;
 
 // define the one we need, that ROOT didn't define

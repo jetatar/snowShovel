@@ -222,7 +222,7 @@ def fitAngFromCrossChanDelays(ntn, dbn,
 
 if __name__=="__main__":
     
-    if (len(sys.argv)<4):
+    if (len(sys.argv)<7):
         print "usage: python fitAngFromCrossChanDelays.py [input filename] "\
             "[tree type] [geo filename] [geo name] [chan offset filename] "\
             "[output filename] (minimizer) (algorithm)"\

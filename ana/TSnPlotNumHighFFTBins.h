@@ -18,21 +18,25 @@ class TSnPlotNumHighFFTBins : public TAModule
 //        TH1F*               hNChWithHighPks;
         TObjArray*      hNHighPksVsMax;
         TH2F*           hNHighPksVsMaxAllCh;
+        TH1F*           fhMinNHM;            // distribution of the minimum NHM on any channel
+        TString         fPlotTag;            // prepend plot names with this string (default: "")
 
     public:
         TSnPlotNumHighFFTBins( ){ }
-        TSnPlotNumHighFFTBins( const Char_t* name );
+        TSnPlotNumHighFFTBins( const Char_t* name,
+                               const Char_t* plotTag=NULL);
+        virtual ~TSnPlotNumHighFFTBins( );
 
-        
-        virtual ~TSnPlotNumHighFFTBins( ){ }
-
+        TString      GetPlotTag() const { return fPlotTag; }
+        void         SetPlotTag(const Char_t* t) { fPlotTag = t; }
+   
     protected:
         virtual void SlaveBegin( );
         virtual void Process( );
         virtual void Terminate( );        
 
 
-    ClassDef( TSnPlotNumHighFFTBins, 1 );
+    ClassDef( TSnPlotNumHighFFTBins, 2 ); // module to make NHM (num bins in fft above half max) distribution plots
 };
 
 

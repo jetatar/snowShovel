@@ -20,7 +20,7 @@ static const Char_t* insmlflnm  =
     Form("/w1/jtatar/Analysis/Stn%s/pl.stn%s_NhmSmallCC.root", 
                                                             stnNum, stnNum); 
 static const Char_t* inminbflnm =
-    Form("/w1/jtatar/Analysis/Stn%s/pl.stn%s_ampcalib_minbias.root",
+    Form("/w1/jtatar/Analysis/Stn%s/pl.stn%s_minbias.root",
                                                             stnNum, stnNum);
 static const Char_t* innoiseflnm = 
     "/w1/jtatar/Analysis/Stn0/pl.stn0_NhmwithStn11CovMatrix.root";
@@ -101,19 +101,19 @@ void pplNhm_PureThmVsThm( void )
 
         hsml[ch]->SetTitle( ";N_{HM};Normalized Num. Events" );
         hsml[ch]->SetLineStyle( 1 );
-        hsml[ch]->GetXaxis()->SetRangeUser( -0.5, 27.5 );
+        hsml[ch]->GetXaxis()->SetRangeUser( -0.5, 40.5 );
 
         hlrg[ch]->SetLineStyle( 2 );
         hlrg[ch]->SetTitle( ";N_{HM};Normalized Num. Events" );
-        hlrg[ch]->GetXaxis()->SetRangeUser( -0.5, 27.5 );
+        hlrg[ch]->GetXaxis()->SetRangeUser( -0.5, 40.5 );
 
         hminb[ch]->SetLineStyle( 3 );
         hminb[ch]->SetTitle( ";N_{HM};Normalized Num. Events" );
-        hminb[ch]->GetXaxis()->SetRangeUser( -0.5, 27.5 );
+        hminb[ch]->GetXaxis()->SetRangeUser( -0.5, 40.5 );
 
         hnoise[ch]->SetLineStyle( 4 );
         hnoise[ch]->SetTitle( ";N_{HM};Normalized Num. Events" );
-        hnoise[ch]->GetXaxis()->SetRangeUser( -0.5, 27.5 );
+        hnoise[ch]->GetXaxis()->SetRangeUser( -0.5, 40.5 );
 
         c[ch]->Print( Form("%sNhmPureThmVsThmWithStn11CovMatrix.pdf", 
                                                             outdir.Data()) );

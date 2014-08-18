@@ -93,7 +93,7 @@ endif
 #
 # Targets that do not correspond to a file
 #
-.PHONY: all libs pars extras map test htmldoc clean distclean printmods
+.PHONY: all libs pars extras map test htmldoc htmldoc-clean clean distclean printmods
 
 
 all: libs pars extras map
@@ -130,8 +130,11 @@ printmods:
 	@echo ""
 
 htmldoc: libs
-	rm -rf htmldoc/*.*
+	rm -rf htmldoc/*
 	root -b -q build/make_doc.C+\(\"$$$(TOPVAR)\"\)
+
+htmldoc-clean: 
+	rm -rf htmldoc/*
 
 map: $(MAPFILE)
 

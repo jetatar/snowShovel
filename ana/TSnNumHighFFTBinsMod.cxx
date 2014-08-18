@@ -1,10 +1,11 @@
-#include <algorithm>
+#include <TGraph.h>
 
 #include "TAModule.h"
 #include "TSnCalWvData.h"
 #include "TSnSaveCalibDataMod.h"
 #include "TSnNumHighFFTBinsMod.h"
-#include "TSnCalFFTData.h"
+
+#include <stdexcept>
 
 #include "TMath.h"
 
@@ -32,7 +33,6 @@ void TSnNumHighFFTBinsMod::Calculate( )
                 nhighbins++;
             }
         }
-        
         nHighBins[ch] = nhighbins;
     }
 }
@@ -40,6 +40,12 @@ void TSnNumHighFFTBinsMod::Calculate( )
 
 UInt_t TSnNumHighFFTBinsMod::GetNumHighBins( UChar_t ch )
 {
+    if ( ch > NSnConstants::kNchans )
+    {
+        throw std::out_of_range(
+           Form("<TSnNumHighFFTBinsMod::GetNumHighBins>: "
+                "Invalid channel number [%hhu]", ch));
+    }
     return( nHighBins[ch] );
 }
 

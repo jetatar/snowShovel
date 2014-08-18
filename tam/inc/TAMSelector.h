@@ -147,6 +147,7 @@ public:
    Bool_t            IsAModAborted()     const { return fModAborted;      }
    Bool_t            IsEventAborted()    const { return fEventAborted;    }
    Bool_t            IsAnalysisAborted() const { return fAnalysisAborted; }
+   void              ListObjsThisEvt(Option_t* option = "") const;
    void              LoadBranch(const Char_t* bname);
    Bool_t            Notify();
    Bool_t            Process(Int_t entry) 

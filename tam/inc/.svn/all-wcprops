@@ -1,13 +1,13 @@
 K 25
 svn:wc:ra_dav:version-url
 V 26
-/svn/!svn/ver/13/trunk/inc
+/svn/!svn/ver/16/trunk/inc
 END
 TAModule.h
 K 25
 svn:wc:ra_dav:version-url
 V 37
-/svn/!svn/ver/11/trunk/inc/TAModule.h
+/svn/!svn/ver/16/trunk/inc/TAModule.h
 END
 TAMBranchInfo.h
 K 25
@@ -48,8 +48,8 @@ END
 TAMSelector.h
 K 25
 svn:wc:ra_dav:version-url
-V 39
-/svn/!svn/ver/2/trunk/inc/TAMSelector.h
+V 40
+/svn/!svn/ver/16/trunk/inc/TAMSelector.h
 END
 TAMObjLoader.h
 K 25

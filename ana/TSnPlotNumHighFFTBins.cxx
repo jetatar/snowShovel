@@ -16,13 +16,30 @@ ClassImp( TSnPlotNumHighFFTBins );
 ClassImp( TSnNumHighFFTBinsMod );
 
 
-TSnPlotNumHighFFTBins::TSnPlotNumHighFFTBins( const Char_t* name ) :
+TSnPlotNumHighFFTBins::TSnPlotNumHighFFTBins( const Char_t* name,
+                                              const Char_t* plotTag ) :
     TAModule(name, "TSnPlotNumHighFFTBins" ), fData(0), hNHighPks(0), 
-    hNHighPksAllCh(0), hNHighPksVsMax(0), hNHighPksVsMaxAllCh(0)
+    hNHighPksAllCh(0), hNHighPksVsMax(0), hNHighPksVsMaxAllCh(0),
     //, hNChWithHighPks(0), 
+    fhMinNHM(0),
+    fPlotTag(plotTag)
 {
     hNHighPks       = new TObjArray( NSnConstants::kNchans );
     hNHighPksVsMax  = new TObjArray( NSnConstants::kNchans );
+    
+    // make them delete the histograms they contain when the
+    // arrays get deleted
+    hNHighPks->SetOwner(kTRUE);
+    hNHighPksVsMax->SetOwner(kTRUE);
+}
+
+TSnPlotNumHighFFTBins::~TSnPlotNumHighFFTBins() {
+   // cleanup!
+   delete hNHighPks;
+   delete hNHighPksVsMax;
+   delete hNHighPksAllCh;
+   delete hNHighPksVsMaxAllCh;
+   delete fhMinNHM;
 }
 
 
@@ -31,18 +48,26 @@ void TSnPlotNumHighFFTBins::SlaveBegin( )
 //    ReqBranch( TSnSaveCalibDataMod::kFPNSubDatBrNm, fData );
     ReqBranch( TSnSaveCalibDataMod::kAmpOutDatBrNm, fData );
 
-    hNHighPksAllCh      = new TH1F( "hNHighPksAllCh", "", 61, -0.5, 60.5 );
-    hNHighPksVsMaxAllCh = new TH2F( "hNHighPksVsMaxAllCh", "", 
+    hNHighPksAllCh      = new TH1F( Form("%shNHighPksAllCh",fPlotTag.Data()),
+                                    "", 61, -0.5, 60.5 );
+    hNHighPksVsMaxAllCh = new TH2F( Form("%shNHighPksVsMaxAllCh",fPlotTag.Data()),
+                                    "", 
             TSnCalFFTData::kFftPts + 1, -0.5, TSnCalFFTData::kFftPts + 0.5,
             5001, -0.5, 5000.5 );
 //    hNChWithHighPks = new TH1F( "hNChWithHighPks", "", 5, -0.5, 4.5 ); 
+
+    fhMinNHM            = new TH1F(Form("%sfhMinNHM",fPlotTag.Data()),
+                                   ";Min num high FFT bins on any chan"
+                                   ";Events",
+                                   61, -0.5, 60.5);
     
     for( UChar_t ch = 0; ch < NSnConstants::kNchans; ch++ )
     {
-        TH1F* hhigh = new TH1F( Form("hNHighPks%d", ch), "", 
+        TH1F* hhigh = new TH1F( Form("%shNHighPks%d", fPlotTag.Data(), ch), "",
             TSnCalFFTData::kFftPts + 1, -0.5, TSnCalFFTData::kFftPts + 0.5 );
 //        TH1F* hhigh = new TH1F( Form("hNHighPks%d", ch), "", 61, -0.5, 60.5 );
-        TH2F* hhivsmax = new TH2F( Form("hNHighPksVsMax%d", ch), "", 
+        TH2F* hhivsmax = new TH2F( 
+            Form("%shNHighPksVsMax%d", fPlotTag.Data(), ch), "", 
             TSnCalFFTData::kFftPts + 1, -0.5, TSnCalFFTData::kFftPts + 0.5,
             5001, -0.5, 5000.5 );
                 
@@ -50,7 +75,6 @@ void TSnPlotNumHighFFTBins::SlaveBegin( )
         hNHighPksVsMax->AddAt( hhivsmax, ch );
     }
 
-    hNHighPksAllCh->SetName( "hNHighPksAllCh" );
     hNHighPks->SetName( "hNHighPks" );
     hNHighPksVsMax->SetName( "hNHighPksVsMax" );
 
@@ -58,6 +82,7 @@ void TSnPlotNumHighFFTBins::SlaveBegin( )
     AddOutput( hNHighPksAllCh );
     AddOutput( hNHighPksVsMax );
     AddOutput( hNHighPksVsMaxAllCh );
+    AddOutput( fhMinNHM );
 }
 
 
@@ -68,6 +93,7 @@ void TSnPlotNumHighFFTBins::Process( )
 
     TSnCalFFTData* fft              = 
                             new TSnCalFFTData( "TSnCalFFTData", "", *fData );
+
     TSnNumHighFFTBinsMod* nhFFTBins = 
                             new TSnNumHighFFTBinsMod( "highfft", fft );
 
@@ -83,7 +109,7 @@ void TSnPlotNumHighFFTBins::Process( )
         TGraph* gMax    = fData->NewGraphForChan( ch );
         Float_t max     = TMath::MaxElement( NSnConstants::kNsamps, 
                                                                 gMax->GetY() );
-        Float_t nhibins = nhFFTBins->GetNumHighBins( ch );
+        UInt_t nhibins  = nhFFTBins->GetNumHighBins( ch );
         nHighBins[ch]   = nhibins;
 
         hNHighPksAllCh->Fill( nHighBins[ch] );
@@ -100,6 +126,8 @@ void TSnPlotNumHighFFTBins::Process( )
 //          totHighBins++;
 //        }
     }
+
+    fhMinNHM->Fill( TMath::MinElement( NSnConstants::kNchans, nHighBins) );
 
     if(// (nHighBins[0] >= 6 && nHighBins[2] >= 6)  
         (nHighBins[1] >= 4 && nHighBins[3] >= 4) 
@@ -122,6 +150,11 @@ void TSnPlotNumHighFFTBins::Process( )
 //        Printf( "Skipping event." );
         SkipEvent( );
     }
+    
+    // cleanup!
+    delete fft;
+    delete nhFFTBins;
+    
 }
 
 

@@ -17,6 +17,7 @@ recoDH := \
 	TSnAngleFromSingleChanOffsets.h \
 	TSnSaveRecoResultsMod.h \
 	TSnSaveCorlDataMod.h \
+	TSnFindPureThermalFromAutoCorrMod.h \
 
 recoLIBEXTRA := \
 	`root-config --glibs` \

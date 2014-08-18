@@ -17,15 +17,8 @@
 #include <TList.h>
 #include <TNamed.h>
 #include <TRegexp.h>
-#include <TROOT.h>
 #include <TSystem.h>
-
-class BetterHtml : public THtml {
-public:
-   void CreateIndex(const char **classNames, Int_t numberOfClasses)
-      { THtml::CreateIndex(classNames,numberOfClasses); }
-   ClassDef(BetterHtml,0)
-};
+#include <TDirectory.h>
 
 void get_class_list(TList *cl)
 {
@@ -37,11 +30,12 @@ void get_class_list(TList *cl)
    }
 }
 
-void load_libs()
+void load_libs(TString topvar)
 {
    TDirectory* prevdir = gDirectory;
    TRegexp re("*.so", true);
-   void *dir = gSystem->OpenDirectory("lib");
+   void *dir = gSystem->OpenDirectory(
+      gSystem->ExpandPathName(Form("%s/lib",topvar.Data())));
    if(!dir) return;
    while(const char *file = gSystem->GetDirEntry(dir)) {
       TString s(file);
@@ -54,46 +48,23 @@ void load_libs()
    gDirectory = prevdir;
 }
 
-void make_doc(const char *topvar)
+void make_doc(TString topvar)
 {
    THashList  base;
-   TList      all;
-   BetterHtml html;
+   THtml html;
 
    // Get list of ROOT classes
    get_class_list(&base);
 
    // Load our libraries
-   load_libs();
-
-   // Get list of all classes
-   get_class_list(&all);
-
-   // Generate HTML
-   const char **classes = new const char* [all.GetSize()];
-   int n = 0;
-   TIter next(&all);
-   TNamed *cl;
-   while((cl = dynamic_cast<TNamed*>(next()))) {
+   load_libs(topvar);
    
-      if (base.FindObject(cl->GetName()) != 0) continue;
-      
-      TClass *classp = gROOT->GetClass(cl->GetName());
-      TString path(topvar);
-      path += "/";
-      path += classp->GetImplFileName();
-      gSystem->ExpandPathName(path);
-      ::Info("make_doc","AccessPathName(%s) == %d", path.Data(),
-         gSystem->AccessPathName(path));
-      if (gSystem->AccessPathName(path)) continue;
-      
-      if (TClassEdit::IsStdClass(cl->GetName())) continue;
-      ::Info("make_doc","Processing %s (%s)",
-         cl->GetName(), classp->GetImplFileName());
-      html.MakeClass(cl->GetName(),true);
-      classes[n++] = StrDup(cl->GetName());
-   }
-
-   html.CreateIndex(classes,n);
+   html.SetProductName("SnowShovel");
+   
+   html.SetIncludePath(Form("%s/include:$ROOTSYS/include",topvar.Data()));
+   html.SetRootURL("http://root.cern.ch/root/htmldoc/");
+   html.SetHomepage("https://arianna.ps.uci.edu/");
+   
+   html.MakeAll();
 }
 

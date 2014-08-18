@@ -1,7 +1,7 @@
 K 25
 svn:wc:ra_dav:version-url
 V 26
-/svn/!svn/ver/15/trunk/src
+/svn/!svn/ver/16/trunk/src
 END
 TAMVirtualLoader.cxx
 K 25
@@ -24,8 +24,8 @@ END
 TAMSelector.cxx
 K 25
 svn:wc:ra_dav:version-url
-V 41
-/svn/!svn/ver/2/trunk/src/TAMSelector.cxx
+V 42
+/svn/!svn/ver/16/trunk/src/TAMSelector.cxx
 END
 TAMObjLoader.cxx
 K 25
@@ -49,7 +49,7 @@ TAModule.cxx
 K 25
 svn:wc:ra_dav:version-url
 V 39
-/svn/!svn/ver/11/trunk/src/TAModule.cxx
+/svn/!svn/ver/16/trunk/src/TAModule.cxx
 END
 TAMBranchInfo.cxx
 K 25

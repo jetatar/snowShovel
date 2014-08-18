@@ -8,7 +8,7 @@ export TOPVAR=SNS
 # toggle whether or not to use each external package
 export use_root=1
 export use_cernlib=1
-export use_pqxx=1
+export use_pqxx=0
 
 # the include copy or link command (ln -sf || cp -f)
 #export INCCOPYCMD="cp -f"

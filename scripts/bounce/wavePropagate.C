@@ -6,6 +6,13 @@
 #include <TGraph.h>
 #endif
 
+enum EFirnModel {
+   kLinear,
+   kShelfMC
+};
+
+static const EFirnModel gFirnModel = kShelfMC;
+
 static const Double_t kEpsilon   = 1e-10;
 
 static const Double_t kC_m_ns   = TMath::C() / 1.0e9;
@@ -26,8 +33,13 @@ Double_t getNg(const Double_t depth) {
    } else if (depth<kFernDepth) {
       return kNgIce;
    } else {
-      static const Double_t m = (kNgIce - kNgTopFern) / kFernDepth;
-      return ((depth*m) + kNgTopFern);
+      if (gFirnModel==kLinear) {
+         static const Double_t m = (kNgIce - kNgTopFern) / kFernDepth;
+         return ((depth*m) + kNgTopFern);
+      } else if (gFirnModel==kShelfMC) {
+         static const Double_t m = 1.0 - (0.638*TMath::Exp(depth/34.7));
+         return (1.0 + (0.86*m));
+      }
    }
 }
 

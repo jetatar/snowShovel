@@ -39,9 +39,10 @@ void TSnTreeBuilderMod::Process() {
          TObject* o = FindObjThisEvt(b->GetObjNm());
          const Bool_t copied = b->CopyFrom(o);
          if ( copied==kFALSE ) {
+            ListObjsThisEvt("D");
             return SendError(kAbortAnalysis, "Process",
-                             "Could not copy object [%s] from event",
-                             b->GetBrNm());
+                             "Could not copy object [%s] from event for [%s]",
+                             b->GetObjNm(), b->GetBrNm());
          }
       } else {
          return SendError(kAbortAnalysis, "Process",

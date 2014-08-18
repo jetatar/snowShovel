@@ -26,10 +26,35 @@ class TSnInterp1DWvData : public TNamed {
    virtual const TObject* GetInterpolator() const              = 0;
    virtual void           CopyFrom(const TSnInterp1DWvData& x) = 0;
 
-   Double_t       FindXAtMaximum(Double_t* const ymax=0) const
-      { return FindXAtExtremum(kFALSE, ymax); }
-   Double_t       FindXAtMinimum(Double_t* const ymax=0) const
-      { return FindXAtExtremum(kTRUE, ymax);  }
+   Double_t       FindXAtMaximum(Double_t* const ymax=0) const {
+      // find the value of the independent variable (x) at which
+      // the dependent variable (y) is a maximum
+      //
+      // if a non-zero pointer to 'ymax' is specified, the value of
+      // ymax will be set to the maximum
+      return FindXAtExtremum(kFALSE, ymax);
+   }
+   Double_t       FindXAtMinimum(Double_t* const ymin=0) const {
+      // find the value of the independent variable (x) at which
+      // the dependent variable (y) is a maximum
+      //
+      // if a non-zero pointer to 'ymin' is specified, the value of
+      // ymin will be set to the maximum
+      return FindXAtExtremum(kTRUE, ymin);
+   }
+
+   Double_t       FindMaximum() const {
+      // return the maximum value of the dependent variable
+      Double_t ymax(0);
+      FindXAtMaximum(&ymax);
+      return ymax;
+   }
+   Double_t       FindMinimum() const {
+      // return the minimum value of the dependent variable
+      Double_t ymin(0);
+      FindXAtMinimum(&ymin);
+      return ymin;
+   }
 
    Double_t       operator()(Double_t x) const {
       // allows wrapping this interpolator in a ROOT::Math::Functor1D

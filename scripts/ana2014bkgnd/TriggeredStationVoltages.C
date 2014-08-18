@@ -1,3 +1,12 @@
+/*
+    This script takes uses James' covariance matrix to create finite bandwidth events.
+
+    o Uses reflected events only.
+    o Skips repeated events.
+    o Requires at least 2 channels to be above threshold.
+    o Ch2 value is Ch0 because shelfMC is outputing nonsense values for Ch2
+*/
+
 #include "TFile.h"
 #include "TGraph.h"
 #include "TLegend.h"
@@ -46,6 +55,31 @@ Float_t* calcRatios( Float_t v[kNchans] )
 }
 
 
+Bool_t repEvt( Float_t* val, Float_t* prev )
+{
+    Double_t epsiMin[kNchans];
+    Double_t epsiPls[kNchans];
+
+    for( UChar_t ch = 0; ch < kNchans; ch++)
+    {
+        epsiMin[ch] = val[ch] - 1e-8;
+        epsiPls[ch] = val[ch] + 1e-8;
+
+//        Printf( "Ch%d %.8f %.8f", ch, epsiMin[ch], epsiPls[ch] );
+
+
+        if( prev[ch] < epsiPls[ch] && prev[ch] > epsiMin[ch] )
+        {
+            return( kTRUE );
+
+            break;
+        }
+    }
+
+    return( kFALSE );
+}
+
+
 void TriggeredStationVoltages( void )
 {
     // Input File & Tree.
@@ -81,6 +115,8 @@ void TriggeredStationVoltages( void )
 
     Float_t direct[4];
     Float_t reflected[4];
+    // last reflected event against which to check for duplicates
+    Float_t lastReflected[4];   
 
     // With noise.
 //    intr->SetBranchAddress( "volt_LPA", &(direct[0]) );
@@ -110,6 +146,34 @@ void TriggeredStationVoltages( void )
     
         Float_t* dirPassRatio = NULL;
         Float_t* refPassRatio = NULL;
+
+
+        // Skip repeated events.
+        if( i == 0 )
+        {
+            for( UChar_t ch = 0; ch < kNchans; ch++ )
+            {
+                lastReflected[ch] = reflected[ch];
+            }
+        }
+        else
+        {
+            Bool_t revt = repEvt( &(reflected[0]), &(lastReflected[0]) );
+
+            if( revt )
+            {
+                Printf( "Skipping evt %d due to repetition.", i );
+
+                continue;
+            }
+            else
+            {
+                for( UChar_t ch = 0; ch < kNchans; ch++ )
+                {
+                   lastReflected[ch] = reflected[ch]; 
+                }
+            }
+        }        
 
         // Count number of channels above threshold.
         for( UShort_t c = 0; c < kNchans; c++ )

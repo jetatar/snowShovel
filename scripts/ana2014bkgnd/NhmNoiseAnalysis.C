@@ -1,3 +1,7 @@
+/*
+    Takes finite bandwidth events created with James' covariance matrix and calculates N_{HM}
+*/
+
 #if !defined(__CINT__) || defined(__MAKECINT__)
 
 #include <vector>
@@ -36,13 +40,12 @@ const Char_t* stnNum    = "0";
 // Input file
 //const Char_t* infl      = "/w1/jtatar/Analysis/Stn0/realisticSignal.root"; 
 //const Char_t* infl = "/w1/jtatar/Analysis/Stn0/realisticSignal_Ch0EqCh2_ReflectedOnly.root";
-const Char_t* infl = "/w1/jtatar/Analysis/Templates/nt.onlytemplates.root";
+const Char_t* infl      = "stn11.NoiseTree.root";
 // Output file
-//const Char_t* outfn     = 
-//    Form("/w1/jtatar/Analysis/Stn%s/pl.stn%s_NhmwithStn11CovMatrix.root", 
-//                                                            stnNum, stnNum);
+TString outfn           = 
+    Form("/w1/jtatar/Analysis/Stn%s/pl.stn%s_NhmwithStn11CovMatrix.root", 
+                                                            stnNum, stnNum);
 //TString outfn = "/w1/jtatar/Analysis/Stn0/pl.realisticSignalNhm_Ch0EqCh2_ReflectedOnly.root";
-TString outfn = "/w1/jtatar/Analysis/Stn0/pl.rawTemplates.root";
 
 // Signal Templates file
 const Char_t* sigflnm   = "/w1/jtatar/Analysis/Templates/nt.sigtemps.root";
@@ -81,7 +84,7 @@ void NhmNoiseAnalysis( void )
     if( outmod != 0 )
     {
         Printf( "Writing output..." );
-        fout = TFile::Open( outfn, "recreate" );
+        fout = TFile::Open( outfn.Data(), "recreate" );
 
         fout->cd( );
         outmod->Write( );

@@ -728,6 +728,17 @@ void TAMSelector::LoadBranch(const Char_t *bname)
 
 
 //______________________________________________________________________________
+void	TAMSelector::ListObjsThisEvt(Option_t* option /*= ""*/) const
+{
+   // List all objects in the event object table.
+   // Wildcarding supported, eg option="xxx*" lists only objects
+   // with names xxx*.
+   
+   Printf("Event object list for selector [%s] ...", GetName());
+   fEventObjs.ls(option);
+}
+
+//______________________________________________________________________________
 void TAMSelector::LoadBranch(TAMBranchInfo* brInfo)
 {
    // Loads the selected branch and get the current entry (number fCurEvt)
@@ -775,7 +786,6 @@ void TAMSelector::LoadBranch(TAMBranchInfo* brInfo)
    if (fDoProxy) 
      fProxy.Enable();
 }
-
 
 //______________________________________________________________________________
 Bool_t TAMSelector::Notify() 

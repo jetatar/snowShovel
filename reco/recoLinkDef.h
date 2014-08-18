@@ -25,6 +25,7 @@
 #pragma link C++ class TSnSaveRecoResultsMod+;
 #pragma link C++ class TSnSaveRecoResultsMod::TSnRecoResultWrapper+;
 #pragma link C++ class TSnSaveCorlDataMod+;
+#pragma link C++ class TSnFindPureThermalFromAutoCorrMod+;
 
 #ifdef USE_FOR_AUTLOADING // add the namespace to the rootmap
 #pragma link C++ class NSnChanCorl+;

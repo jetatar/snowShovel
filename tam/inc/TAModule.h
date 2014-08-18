@@ -83,6 +83,7 @@ protected:
    Bool_t              IsEventAborted()      const;
    Bool_t              IsAnalysisAborted()   const;
    void                ls(Option_t *option)  const;
+   void                ListObjsThisEvt(Option_t* option = "") const;
    void                LoadBranch(const Char_t* bname);
    virtual TObject    *FindObjThisEvt(const Char_t* name) const;
    virtual Bool_t      Notify()                    { return kTRUE; }

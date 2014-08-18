@@ -9,6 +9,7 @@
 #include "TSnCalWvData.h"
 #include "TSnSaveCalibDataMod.h"
 #include "TSnCalFFTData.h"
+#include "TSnNumHighFFTBinsMod.h"
 
 #include "TH2F.h"
 #include "TH1F.h"
@@ -105,31 +106,24 @@ void TSnPlotCCMod::Process( )
 
         UInt_t Peaks[NSnConstants::kNchans];        
 
+        // use TSnNumHighFFTBinsMod rather than copying the algorithm here
+        // (why is this class called a "Mod" when it's not a module?)
+        TSnNumHighFFTBinsMod nhmCalculator("nhmCalc", fft);
+        nhmCalculator.Calculate();
+        
+
         for( UChar_t ch = 0; ch < NSnConstants::kNchans; ch++ )
         {
             Float_t maxElem;
-            Float_t* pfft       = fft->GetFFTData( ch );
-            Float_t* peakValue  = std::max_element( pfft,
-                                                pfft + TSnCalFFTData::kFftPts);
-            UInt_t nhighbins    = 0;
-            TH1F* hhigh         = dynamic_cast<TH1F*>( hNHighPks->At(ch) ); 
-
-            for( UChar_t pt = 0; pt < TSnCalFFTData::kFftPts; pt++ )
-            {
-                Float_t binVal  = *( pfft + pt );
-
-                if( binVal > *peakValue/2 )
-                {
-                    nhighbins++;
-                }
-            }
+            const UInt_t nhighbins = nhmCalculator.GetNumHighBins( ch );
+            TH1F* hhigh            = dynamic_cast<TH1F*>( hNHighPks->At(ch) );
 
             Peaks[ch] = nhighbins;
 
             hhigh->Fill( nhighbins );
             hNHighPksAllCh->Fill( nhighbins );
 
-            maxElem     = fft->GetFrequency( std::distance(pfft, peakValue) ); 
+            maxElem     = nhmCalculator.GetHighBinElem( ch );
             TH1F* hpeak = dynamic_cast<TH1F*>( hFFTPeak->At(ch) );
 
             hpeak->Fill( maxElem ); 
